@@ -19,12 +19,12 @@ const SimulationControls = ({
 
     // Time scale presets
     const timeScalePresets = [
-        { label: '1x', value: 1 },
         { label: '10x', value: 10 },
         { label: '100x', value: 100 },
         { label: '1000x', value: 1000 },
         { label: '10000x', value: 10000 },
         { label: '100000x', value: 100000 },
+        { label: '1000000x', value: 1000000 },
     ];
 
     // Integration method options with additional information
