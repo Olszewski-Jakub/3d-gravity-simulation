@@ -6,16 +6,16 @@ A 3D gravitational physics simulator for learning linear algebra and differentia
 
 1. [Introduction](#introduction)
 2. [Mathematical Foundation with Examples](#mathematical-foundation-with-examples)
-    - [Vector Mathematics](#vector-mathematics)
-    - [Linear Algebra Applications](#linear-algebra-applications)
-    - [Matrix Transformations](#matrix-transformations)
+   - [Vector Mathematics](#vector-mathematics)
+   - [Linear Algebra Applications](#linear-algebra-applications)
+   - [Matrix Transformations](#matrix-transformations)
 3. [Physics Equations and Examples](#physics-equations-and-examples)
-    - [Gravitational Force Calculations](#gravitational-force-calculations)
-    - [Orbital Mechanics](#orbital-mechanics)
+   - [Gravitational Force Calculations](#gravitational-force-calculations)
+   - [Orbital Mechanics](#orbital-mechanics)
 4. [Numerical Integration with Examples](#numerical-integration-with-examples)
-    - [Euler Method](#euler-method)
-    - [Verlet Integration](#verlet-integration)
-    - [Runge-Kutta 4 Method](#runge-kutta-4-method)
+   - [Euler Method](#euler-method)
+   - [Verlet Integration](#verlet-integration)
+   - [Runge-Kutta 4 Method](#runge-kutta-4-method)
 5. [Collision Physics](#collision-physics)
 6. [Linear Algebra in 3D Visualization](#linear-algebra-in-3d-visualization)
 7. [Step-by-Step Simulation Example](#step-by-step-simulation-example)
@@ -104,24 +104,29 @@ This points in the negative z-direction with magnitude equal to the area of the 
 
 The complete state of a celestial body can be represented as a state vector:
 
-$$\vec{s} = \begin{bmatrix}
+$$
+\vec{s} = \begin{bmatrix}
 \text{position}_x \\
 \text{position}_y \\
 \text{position}_z \\
 \text{velocity}_x \\
 \text{velocity}_y \\
 \text{velocity}_z
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 For Earth:
-$$\vec{s}_\text{Earth} = \begin{bmatrix}
+
+$$
+\vec{s}_\text{Earth} = \begin{bmatrix}
 149.6 \times 10^9 \\
 0 \\
 0 \\
 0 \\
 29.78 \times 10^3 \\
 0
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 #### 2. Linear Systems in Physics Calculations
 
@@ -150,12 +155,14 @@ This acceleration vector points toward the Sun, keeping Earth in orbit.
 
 To visualize astronomical distances, we scale them by a factor of $10^{-9}$:
 
-$$S = \begin{bmatrix}
+$$
+S = \begin{bmatrix}
 10^{-9} & 0 & 0 & 0 \\
 0 & 10^{-9} & 0 & 0 \\
 0 & 0 & 10^{-9} & 0 \\
 0 & 0 & 0 & 1
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 Applying this to Earth's position:
 
@@ -169,12 +176,14 @@ The scaled position is $[149.6, 0, 0]$ units, which is manageable for visualizat
 
 The camera view matrix transforms world coordinates to camera coordinates:
 
-$$V = \begin{bmatrix}
+$$
+V = \begin{bmatrix}
 r_{11} & r_{12} & r_{13} & -\vec{r}_1 \cdot \vec{eye} \\
 r_{21} & r_{22} & r_{23} & -\vec{r}_2 \cdot \vec{eye} \\
 r_{31} & r_{32} & r_{33} & -\vec{r}_3 \cdot \vec{eye} \\
 0 & 0 & 0 & 1
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 Where:
 
@@ -183,12 +192,14 @@ Where:
 
 For a camera at $[0, 50, 200]$ looking at the origin:
 
-$$V \approx \begin{bmatrix}
+$$
+V \approx \begin{bmatrix}
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & -50 \\
 0 & 0 & 1 & -200 \\
 0 & 0 & 0 & 1
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 ## Physics Equations and Examples
 
@@ -360,24 +371,28 @@ Where:
 For brevity, we'll just outline the process without the full calculation:
 
 1. $\vec{k}_1$: Evaluate derivatives at the initial state
-    - $\vec{v}_1 = \text{initial velocity} = [0, 29.78 \times 10^3, 0]$
-    - $\vec{a}_1 = \text{initial acceleration} = [-5.93 \times 10^{-3}, 0, 0]$
+
+   - $\vec{v}_1 = \text{initial velocity} = [0, 29.78 \times 10^3, 0]$
+   - $\vec{a}_1 = \text{initial acceleration} = [-5.93 \times 10^{-3}, 0, 0]$
 
 2. $\vec{k}_2$: Evaluate at $t+dt/2$ using $\vec{k}_1$
-    - Position at midpoint = initial position + velocity × dt/2
-    - Recalculate acceleration at this midpoint
+
+   - Position at midpoint = initial position + velocity × dt/2
+   - Recalculate acceleration at this midpoint
 
 3. $\vec{k}_3$: Evaluate at $t+dt/2$ using $\vec{k}_2$
-    - Different midpoint based on $\vec{k}_2$ values
-    - Recalculate acceleration again
+
+   - Different midpoint based on $\vec{k}_2$ values
+   - Recalculate acceleration again
 
 4. $\vec{k}_4$: Evaluate at $t+dt$ using $\vec{k}_3$
-    - Position at end of step based on $\vec{k}_3$
-    - Recalculate acceleration one more time
+
+   - Position at end of step based on $\vec{k}_3$
+   - Recalculate acceleration one more time
 
 5. Combine with weights:
-    - New position = initial position + $(\vec{v}_1 + 2\vec{v}_2 + 2\vec{v}_3 + \vec{v}_4)/6 \times dt$
-    - New velocity = initial velocity + $(\vec{a}_1 + 2\vec{a}_2 + 2\vec{a}_3 + \vec{a}_4)/6 \times dt$
+   - New position = initial position + $(\vec{v}_1 + 2\vec{v}_2 + 2\vec{v}_3 + \vec{v}_4)/6 \times dt$
+   - New velocity = initial velocity + $(\vec{a}_1 + 2\vec{a}_2 + 2\vec{a}_3 + \vec{a}_4)/6 \times dt$
 
 This provides a more accurate trajectory by sampling the derivatives at multiple points within the time step.
 
@@ -441,20 +456,26 @@ If we want to view the solar system from a point (200, 100, 300) looking at the 
    $$\vec{up} = [0.15, -0.96, 0.22]$$
 
 4. Construct the view matrix:
-   $$\text{view\_matrix} = \begin{bmatrix}
+
+   $$
+   \text{view\_matrix} = \begin{bmatrix}
    \text{right.x} & \text{right.y} & \text{right.z} & -\vec{right} \cdot \vec{eye} \\
    \text{up.x} & \text{up.y} & \text{up.z} & -\vec{up} \cdot \vec{eye} \\
    \text{forward.x} & \text{forward.y} & \text{forward.z} & -\vec{forward} \cdot \vec{eye} \\
    0 & 0 & 0 & 1
-   \end{bmatrix}$$
+   \end{bmatrix}
+   $$
 
    Which gives:
-   $$\text{view\_matrix} = \begin{bmatrix}
+
+   $$
+   \text{view\_matrix} = \begin{bmatrix}
    0.83 & 0 & -0.55 & -166.0 \\
    0.15 & -0.96 & 0.22 & -111.0 \\
    -0.53 & -0.27 & -0.80 & 374.2 \\
    0 & 0 & 0 & 1
-   \end{bmatrix}$$
+   \end{bmatrix}
+   $$
 
 ## Step-by-Step Simulation Example
 
@@ -553,7 +574,8 @@ This implementation:
 Let's consider the mathematical formulation of the Verlet integrator. In linear algebra terms, the Verlet method can be
 represented as:
 
-$$\begin{bmatrix}
+$$
+\begin{bmatrix}
 \vec{x}(t+\Delta t) \\
 \vec{v}(t+\Delta t) \\
 \vec{a}(t+\Delta t)
@@ -572,7 +594,8 @@ $$\begin{bmatrix}
 0 \\
 \frac{\Delta t}{2} \vec{a}(t+\Delta t) \\
 \vec{f}(t+\Delta t) - \vec{a}(t)
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 Where:
 
@@ -662,16 +685,18 @@ This demonstrates the superior energy conservation properties of the Verlet and 
 ## Linear Algebra Learning Exercises
 
 1. **Vector Calculation Exercise**: Calculate the gravitational force vector between:
-    - The Sun at [0, 0, 0] with mass $1.989 \times 10^{30}$ kg
-    - Jupiter at $[778.6 \times 10^9, 0, 0]$ with mass $1.898 \times 10^{27}$ kg
+
+   - The Sun at [0, 0, 0] with mass $1.989 \times 10^{30}$ kg
+   - Jupiter at $[778.6 \times 10^9, 0, 0]$ with mass $1.898 \times 10^{27}$ kg
 
    The gravitational force is:
    $$\vec{F} = G \times \frac{m_\text{Sun} \times m_\text{Jupiter}}{r^2} \times \hat{r}$$
 
    Where:
-    - $G = 6.67430 \times 10^{-11}$ m³/kg·s²
-    - $r = 778.6 \times 10^9$ m
-    - $\hat{r} = [-1, 0, 0]$ (unit vector pointing from Jupiter to Sun)
+
+   - $G = 6.67430 \times 10^{-11}$ m³/kg·s²
+   - $r = 778.6 \times 10^9$ m
+   - $\hat{r} = [-1, 0, 0]$ (unit vector pointing from Jupiter to Sun)
 
    Calculate the force vector and compare it to the force between the Sun and Earth.
 
@@ -679,15 +704,20 @@ This demonstrates the superior energy conservation properties of the Verlet and 
    factor of $10^{-9}$ and a rotation of 45° around the z-axis.
 
    Create the scaling matrix:
-   $$S = \begin{bmatrix}
+
+   $$
+   S = \begin{bmatrix}
    10^{-9} & 0 & 0 & 0 \\
    0 & 10^{-9} & 0 & 0 \\
    0 & 0 & 10^{-9} & 0 \\
    0 & 0 & 0 & 1
-   \end{bmatrix}$$
+   \end{bmatrix}
+   $$
 
    Create the rotation matrix for 45° around z-axis:
-   $$R_z(45°) = \begin{bmatrix}
+
+   $$
+   R_z(45°) = \begin{bmatrix}
    \cos(45°) & -\sin(45°) & 0 & 0 \\
    \sin(45°) & \cos(45°) & 0 & 0 \\
    0 & 0 & 1 & 0 \\
@@ -697,7 +727,8 @@ This demonstrates the superior energy conservation properties of the Verlet and 
    0.707 & 0.707 & 0 & 0 \\
    0 & 0 & 1 & 0 \\
    0 & 0 & 0 & 1
-   \end{bmatrix}$$
+   \end{bmatrix}
+   $$
 
    The combined transformation matrix is:
    $$T = R_z \times S$$
@@ -718,11 +749,12 @@ This demonstrates the superior energy conservation properties of the Verlet and 
    and compare the results.
 
    Use these initial conditions:
-    - Venus position: $[108.2 \times 10^9, 0, 0]$ m
-    - Venus velocity: $[0, 35.02 \times 10^3, 0]$ m/s
-    - Venus mass: $4.8675 \times 10^{24}$ kg
-    - Sun mass: $1.989 \times 10^{30}$ kg
-    - Time step: 1 hour
+
+   - Venus position: $[108.2 \times 10^9, 0, 0]$ m
+   - Venus velocity: $[0, 35.02 \times 10^3, 0]$ m/s
+   - Venus mass: $4.8675 \times 10^{24}$ kg
+   - Sun mass: $1.989 \times 10^{30}$ kg
+   - Time step: 1 hour
 
    Compare the final positions and velocities from each method, as well as the conservation of energy.
 
@@ -730,16 +762,18 @@ This demonstrates the superior energy conservation properties of the Verlet and 
    period of Mars using its position and velocity vectors.
 
    Given:
-    - Mars position: $[227.9 \times 10^9, 0, 0]$ m
-    - Mars velocity: $[0, 24.07 \times 10^3, 0]$ m/s
-    - Sun mass: $1.989 \times 10^{30}$ kg
-    - $G = 6.67430 \times 10^{-11}$ m³/kg·s²
+
+   - Mars position: $[227.9 \times 10^9, 0, 0]$ m
+   - Mars velocity: $[0, 24.07 \times 10^3, 0]$ m/s
+   - Sun mass: $1.989 \times 10^{30}$ kg
+   - $G = 6.67430 \times 10^{-11}$ m³/kg·s²
 
    Calculate:
-    - Specific angular momentum: $\vec{h} = \vec{r} \times \vec{v}$
-    - Eccentricity vector: $\vec{e} = \frac{\vec{v} \times \vec{h}}{GM_\text{Sun}} - \frac{\vec{r}}{|\vec{r}|}$
-    - Semi-major axis: $a = \frac{h^2}{GM_\text{Sun}(1-e^2)}$
-    - Orbital period: $T = 2\pi \sqrt{\frac{a^3}{GM_\text{Sun}}}$
+
+   - Specific angular momentum: $\vec{h} = \vec{r} \times \vec{v}$
+   - Eccentricity vector: $\vec{e} = \frac{\vec{v} \times \vec{h}}{GM_\text{Sun}} - \frac{\vec{r}}{|\vec{r}|}$
+   - Semi-major axis: $a = \frac{h^2}{GM_\text{Sun}(1-e^2)}$
+   - Orbital period: $T = 2\pi \sqrt{\frac{a^3}{GM_\text{Sun}}}$
 
 These exercises demonstrate how linear algebra concepts are applied in gravitational physics simulations, providing
 practical context for abstract mathematical principles.
