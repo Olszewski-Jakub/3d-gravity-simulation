@@ -11,10 +11,10 @@ import { useSimulation } from './SimulationContext';
 const SCALE_FACTOR = 1e-9;
 
 // Extreme scaling for visualization purposes
-const VISUALIZATION_SCALE_FACTOR = 1e-9 * 10; // 1000x more compact for visualization
+const VISUALIZATION_SCALE_FACTOR = 1e-9 ; // 1000x more compact for visualization
 
 // Scale factor for radii to make celestial bodies visually meaningful
-const RADIUS_SCALE_MULTIPLIER = 200;
+const RADIUS_SCALE_MULTIPLIER = 20;
 
 // Additional scale factor for stars to make them more visible
 const STAR_SCALE_MULTIPLIER = 1;

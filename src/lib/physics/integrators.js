@@ -51,6 +51,10 @@ export function eulerIntegrator(bodies, dt, G) {
  */
 export function verletIntegrator(bodies, dt, G) {
     // Create a copy of bodies to prevent mutation of the original array
+
+    //remove stars from bodies the array
+    const sun = bodies.filter(body => body.type === 'star');
+    console.log("Sun", sun);
     const bodiesCopy = JSON.parse(JSON.stringify(bodies));
 
     // Calculate initial accelerations
@@ -76,11 +80,12 @@ export function verletIntegrator(bodies, dt, G) {
             body.velocity[1] + 0.5 * a[1] * dt,
             body.velocity[2] + 0.5 * a[2] * dt
         ];
+        const finalVelocity = body.type === 'star' ? [0, 0, 0] : halfStepVelocity;
 
         return {
             ...body,
             position: newPosition,
-            velocity: halfStepVelocity
+            velocity: finalVelocity
         };
     });
 

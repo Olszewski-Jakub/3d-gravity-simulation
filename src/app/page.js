@@ -20,10 +20,10 @@ const GravitySimulation = dynamic(
 
 export default function Home() {
   const [simulationState, setSimulationState] = useState({
-    timeScale: 100,
+    timeScale: 20,
     paused: false,
     integrationMethod: 'verlet', // 'euler', 'verlet', or 'rk4'
-    gravitationalConstant: 6.67430e-10, // Increased for more visible motion
+    gravitationalConstant: 6.67430e-11, // Standard value
     showOrbitalPaths: true,
     enableCollisions: true,
     selectedBody: null,

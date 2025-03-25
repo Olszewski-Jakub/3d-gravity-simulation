@@ -17,17 +17,16 @@ export function calculateGravitationalForce(body1, body2, G) {
     // Calculate squared distance (for efficiency)
     const distanceSquared = dx * dx + dy * dy + dz * dz;
 
-    // Prevent division by zero or very small numbers
-    if (distanceSquared < 1e-10) {
-        return [0, 0, 0];
-    }
+    // Prevent division by zero and enforce minimum distance
+    // Use a minimum distance based on the sum of the radii to prevent extreme forces
+    const minDistanceSquared = Math.pow(body1.radius + body2.radius, 2) * 1.5;
+    const effectiveDistanceSquared = Math.max(distanceSquared, minDistanceSquared);
 
     // Calculate distance (magnitude)
-    const distance = Math.sqrt(distanceSquared);
+    const distance = Math.sqrt(effectiveDistanceSquared);
 
     // Calculate force magnitude using Newton's Law of Universal Gravitation
-    // Increase the force for better visual effect
-    const forceMagnitude = G * (body1.mass * body2.mass) / distanceSquared;
+    const forceMagnitude = G * (body1.mass * body2.mass) / effectiveDistanceSquared;
 
     // Calculate normalized direction vector
     const directionX = dx / distance;

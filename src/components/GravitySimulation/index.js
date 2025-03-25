@@ -5,6 +5,7 @@ import ErrorBoundary from './ErrorBoundary';
 import ClientWrapper from './ClientWrapper';
 import { eulerIntegrator, verletIntegrator, rungeKutta4Integrator } from '../../lib/physics/integrators';
 import { areColliding, handleCollision } from '../../lib/physics/gravitationalForce';
+import { stabilizeOrbits, enforceSafeDistances } from '../../lib/physics/orbitStabilizer';
 
 /**
  * Calculate the distance between two 3D points
@@ -73,6 +74,9 @@ const GravitySimulation = ({
         if (lastUpdateTimeRef.current === null) {
             lastUpdateTimeRef.current = Date.now();
         }
+
+        // Frame counter for orbit stabilization
+        const frameCount = { count: 0 };
 
         // Animation loop function
         const animate = () => {
@@ -198,7 +202,7 @@ const GravitySimulation = ({
                 setBodies(updatedBodies);
             }
         }
-        console.log(bodies);
+
         // Cleanup function
         return () => {
             if (animationFrameRef.current) {
