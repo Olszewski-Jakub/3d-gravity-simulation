@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import CelestialBody from './CelestialBody';
@@ -11,13 +11,13 @@ import { useSimulation } from './SimulationContext';
 const SCALE_FACTOR = 1e-9;
 
 // Extreme scaling for visualization purposes
-const VISUALIZATION_SCALE_FACTOR = 1e-9 ; // 1000x more compact for visualization
+const VISUALIZATION_SCALE_FACTOR = 1e-9; // More compact for visualization
 
 // Scale factor for radii to make celestial bodies visually meaningful
-const RADIUS_SCALE_MULTIPLIER = 40;
+const RADIUS_SCALE_MULTIPLIER = 60;
 
 // Additional scale factor for stars to make them more visible
-const STAR_SCALE_MULTIPLIER = 10;
+const STAR_SCALE_MULTIPLIER = 1;
 
 const Scene = () => {
     const { camera } = useThree();
@@ -33,8 +33,11 @@ const Scene = () => {
     } = useSimulation();
 
     // Find bounding box for all bodies to adjust scaling dynamically
-    const sceneBounds = useMemo(() => {
-        if (!bodies || bodies.length === 0) return { min: [-100, -100, -100], max: [100, 100, 100] };
+    const { sceneBounds, sceneCenter } = useMemo(() => {
+        if (!bodies || bodies.length === 0) return {
+            sceneBounds: { min: [-100, -100, -100], max: [100, 100, 100] },
+            sceneCenter: [0, 0, 0]
+        };
 
         const min = [Infinity, Infinity, Infinity];
         const max = [-Infinity, -Infinity, -Infinity];
@@ -46,40 +49,29 @@ const Scene = () => {
             }
         });
 
-        return { min, max };
+        // Calculate scene center
+        const center = [
+            (min[0] + max[0]) / 2,
+            (min[1] + max[1]) / 2,
+            (min[2] + max[2]) / 2
+        ];
+
+        return {
+            sceneBounds: { min, max },
+            sceneCenter: center
+        };
     }, [bodies]);
-
-    // Calculate dynamic scale factor based on scene size
-    const dynamicScaleFactor = useMemo(() => {
-        const sceneSize = Math.max(
-            sceneBounds.max[0] - sceneBounds.min[0],
-            sceneBounds.max[1] - sceneBounds.min[1],
-            sceneBounds.max[2] - sceneBounds.min[2]
-        );
-
-        // Prevent division by zero and maintain a reasonable scale
-        if (sceneSize < 1e8) return SCALE_FACTOR;
-
-        // Dynamic scaling: larger scenes get smaller scale factors
-        return 100 / sceneSize;
-    }, [sceneBounds]);
 
     // Scale positions for rendering
     const scaledBodies = useMemo(() => {
-        const sceneCenter = [
-            (sceneBounds.min[0] + sceneBounds.max[0]) / 2,
-            (sceneBounds.min[1] + sceneBounds.max[1]) / 2,
-            (sceneBounds.min[2] + sceneBounds.max[2]) / 2
-        ];
-
         return bodies.map(body => {
-            const typeMultiplier = body.type === 'star' ?   1 : STAR_SCALE_MULTIPLIER;
+            const typeMultiplier = body.type === 'star' ? STAR_SCALE_MULTIPLIER : 1;
             const minStarSize = body.type === 'star' ? 2 : 0.5;
 
             const centeredPosition = [
-                body.position[0] - sceneCenter[0],
-                body.position[1] - sceneCenter[1],
-                body.position[2] - sceneCenter[2]
+                body.position[0] ,
+                body.position[1] ,
+                body.position[2]
             ];
 
             return {
@@ -91,27 +83,20 @@ const Scene = () => {
                 )
             };
         });
-    }, [bodies, sceneBounds]);
+    }, [bodies, sceneCenter]);
 
     // Scale orbital paths for rendering
     const scaledPaths = useMemo(() => {
         const scaled = {};
 
         if (showOrbitalPaths) {
-            // Calculate the scene center for centering the view
-            const sceneCenter = [
-                (sceneBounds.min[0] + sceneBounds.max[0]) / 2,
-                (sceneBounds.min[1] + sceneBounds.max[1]) / 2,
-                (sceneBounds.min[2] + sceneBounds.max[2]) / 2
-            ];
-
             Object.entries(orbitalPaths).forEach(([bodyId, path]) => {
                 // Center and apply extreme scaling to orbital paths
                 scaled[bodyId] = path.map(point => {
                     const centered = [
-                        point[0] - sceneCenter[0],
-                        point[1] - sceneCenter[1],
-                        point[2] - sceneCenter[2]
+                        point[0] ,
+                        point[1] ,
+                        point[2]
                     ];
                     return centered.map(pos => pos * VISUALIZATION_SCALE_FACTOR);
                 });
@@ -119,10 +104,12 @@ const Scene = () => {
         }
 
         return scaled;
-    }, [orbitalPaths, showOrbitalPaths, sceneBounds]);
+    }, [orbitalPaths, showOrbitalPaths, sceneCenter]);
 
-    // We'll use a dedicated camera control component instead of managing it here
-    // This removes the problematic camera.target code that was causing errors
+    // Find Sun body to place point light
+    const sunBody = useMemo(() => {
+        return scaledBodies.find(body => body.type === 'star' && body.name === 'Sun');
+    }, [scaledBodies]);
 
     return (
         <group ref={groupRef}>

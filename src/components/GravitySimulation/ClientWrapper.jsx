@@ -35,6 +35,17 @@ const ClientWrapper = ({
         }
     }, []);
 
+    // Find Sun position for initial camera focus
+    const sunPosition = React.useMemo(() => {
+        const sun = bodies.find(body => body.type === 'star' && body.name === 'Sun');
+        if (sun) {
+            // Apply scaling factor to make the scene more visible
+            const SCALE_FACTOR = 1e-9;
+            return sun.position.map(pos => pos * SCALE_FACTOR);
+        }
+        return [0, 0, 0]; // Default if Sun not found
+    }, [bodies]);
+
     // Use fallback renderer if WebGL is not available
     if (!canUseWebGL) {
         return <FallbackRenderer bodies={bodies} />;
@@ -51,28 +62,24 @@ const ClientWrapper = ({
         >
             <Canvas
                 camera={{
-                    position: [0, 50, 200],
+                    position: [sunPosition[0]+300, sunPosition[1] + 100, sunPosition[2] + 100],
                     fov: 60,
                     near: 0.1,
-                    far: 10000
+                    far: 1000000000000000000000000
                 }}
                 gl={{ antialias: true }}
                 dpr={[1, 2]} // Responsive to device pixel ratio
             >
                 <Scene />
-                <CustomOrbitControls />
-                {/*<Stars radius={300} depth={60} count={5000} factor={7} saturation={0} fade />*/}
+                <CustomOrbitControls initialTarget={sunPosition} />
 
                 {/* Enhanced lighting */}
                 <ambientLight intensity={0.8} />
                 <hemisphereLight intensity={0.8} color="#ffffff" groundColor="#000000" />
-                <pointLight position={[0, 0, 0]} intensity={5} distance={1000} />
-                {/*<Stars radius={300} depth={60} count={5000} factor={7} saturation={0} fade />*/}
+                <pointLight position={sunPosition} intensity={5} distance={1000} />
 
-                {/* Enhanced lighting */}
-                <ambientLight intensity={0.4} />
-                <hemisphereLight intensity={0.5} color="#ffffff" groundColor="#000000" />
-                <pointLight position={[0, 0, 0]} intensity={2} distance={500} />
+                {/* Additional stars background */}
+                <Stars radius={300} depth={60} count={5000} factor={7} saturation={0} fade />
             </Canvas>
         </SimulationProvider>
     );

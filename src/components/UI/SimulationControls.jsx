@@ -26,8 +26,6 @@ const SimulationControls = ({
         { label: '10000x', value: 10000 },
         { label: '100000x', value: 100000 },
         { label: '1000000x', value: 1000000 },
-        { label: '10000000x', value: 10000000 },
-        { label: '100000000x', value: 100000000 },
     ];
 
     // Integration method options

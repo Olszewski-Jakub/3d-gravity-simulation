@@ -12,9 +12,18 @@ const SCALE_FACTOR = 1e-9;
 /**
  * Custom OrbitControls that can focus on selected celestial bodies
  */
-const CustomOrbitControls = (props) => {
+const CustomOrbitControls = ({ initialTarget = [0, 0, 0], ...props }) => {
     const controlsRef = useRef();
     const { selectedBodyId, bodies } = useSimulation();
+
+    // Initialize control target on mount
+    useEffect(() => {
+        if (controlsRef.current) {
+            // Set initial target position
+            controlsRef.current.target.set(initialTarget[0], initialTarget[1], initialTarget[2]);
+            controlsRef.current.update();
+        }
+    }, [initialTarget]);
 
     // Handle body selection changes
     useEffect(() => {

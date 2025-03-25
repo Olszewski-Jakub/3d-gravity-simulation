@@ -41,6 +41,16 @@ const GravitySimulation = ({
         selectedBody = null
     } = simulationState || {};
 
+    // Find sun ID for initial selection if no body is selected
+    useEffect(() => {
+        if (!selectedBody && bodies.length > 0 && onSelectBody) {
+            const sun = bodies.find(body => body.type === 'star' && body.name === 'Sun');
+            if (sun) {
+                onSelectBody(sun.id);
+            }
+        }
+    }, [bodies, selectedBody, onSelectBody]);
+
     // Initialize lastUpdateTimeRef if needed
     useEffect(() => {
         if (lastUpdateTimeRef.current === null) {
