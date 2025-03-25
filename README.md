@@ -3,6 +3,7 @@
 A 3D gravitational physics simulator for learning linear algebra and differential equations through celestial mechanics.
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Mathematical Foundation with Examples](#mathematical-foundation-with-examples)
     - [Vector Mathematics](#vector-mathematics)
@@ -22,15 +23,19 @@ A 3D gravitational physics simulator for learning linear algebra and differentia
 
 ## Introduction
 
-This gravity simulator serves as a practical tool for learning linear algebra, vector calculus, and differential equations through the lens of gravitational physics. By exploring how celestial bodies interact in 3D space, students can gain intuition for abstract mathematical concepts and see their real-world applications.
+This gravity simulator serves as a practical tool for learning linear algebra, vector calculus, and differential
+equations through the lens of gravitational physics. By exploring how celestial bodies interact in 3D space, students
+can gain intuition for abstract mathematical concepts and see their real-world applications.
 
 ## Mathematical Foundation with Examples
 
 ### Vector Mathematics
 
-The simulator is built on vector operations in 3D space. Let's examine the key operations with concrete examples based on two celestial bodies:
+The simulator is built on vector operations in 3D space. Let's examine the key operations with concrete examples based
+on two celestial bodies:
 
 **Sample Data:**
+
 - Earth position: $[149.6 \times 10^9, 0, 0]$ meters (149.6 million km from the Sun)
 - Mars position: $[227.9 \times 10^9, 0, 0]$ meters (227.9 million km from the Sun)
 - Earth velocity: $[0, 29.78 \times 10^3, 0]$ m/s (orbital velocity)
@@ -80,7 +85,8 @@ $$\vec{v}_\text{Earth} \cdot \vec{r} = v_1r_1 + v_2r_2 + v_3r_3$$
 $$\vec{v}_\text{Earth} \cdot \vec{r} = 0 \times (78.3 \times 10^9) + (29.78 \times 10^3) \times 0 + 0 \times 0$$
 $$\vec{v}_\text{Earth} \cdot \vec{r} = 0$$
 
-This equals zero because Earth's velocity is perpendicular to the displacement vector, meaning Earth is not moving directly toward or away from Mars.
+This equals zero because Earth's velocity is perpendicular to the displacement vector, meaning Earth is not moving
+directly toward or away from Mars.
 
 #### 6. Cross Product (Area or Perpendicular Vector)
 
@@ -126,6 +132,7 @@ For a simplified 2-body problem (Sun and Earth), the acceleration of Earth is:
 $$\vec{a}_\text{Earth} = \frac{\vec{F}}{m_\text{Earth}} = \frac{G \times m_\text{Sun} \times m_\text{Earth}}{r^2} \times \frac{\vec{r}}{r} \times \frac{1}{m_\text{Earth}} = \frac{G \times m_\text{Sun}}{r^2} \times \hat{r}$$
 
 With:
+
 - $G = 6.67430 \times 10^{-11} \text{ m}^3/\text{kg} \cdot \text{s}^2$
 - $m_\text{Sun} = 1.989 \times 10^{30} \text{ kg}$
 - $r = 149.6 \times 10^9 \text{ meters}$
@@ -170,6 +177,7 @@ r_{31} & r_{32} & r_{33} & -\vec{r}_3 \cdot \vec{eye} \\
 \end{bmatrix}$$
 
 Where:
+
 - $\vec{r}_1, \vec{r}_2, \vec{r}_3$ are the right, up, and forward basis vectors
 - $\vec{eye}$ is the camera position
 
@@ -195,6 +203,7 @@ Force between the Sun and Earth:
 $$\vec{F} = G \times \frac{m_1 \times m_2}{|\vec{r}|^2} \times \frac{\vec{r}}{|\vec{r}|}$$
 
 With:
+
 - $G = 6.67430 \times 10^{-11} \text{ m}^3/\text{kg} \cdot \text{s}^2$
 - $m_\text{Sun} = 1.989 \times 10^{30} \text{ kg}$
 - $m_\text{Earth} = 5.972 \times 10^{24} \text{ kg}$
@@ -215,9 +224,11 @@ For a three-body system (Sun, Earth, Mars), the net force on Earth is:
 $$\vec{F}_\text{net} = \vec{F}_\text{Sun→Earth} + \vec{F}_\text{Mars→Earth}$$
 
 From our previous calculation:
+
 - $\vec{F}_\text{Sun→Earth} = [-3.55 \times 10^{22}, 0, 0] \text{ N}$
 
 For the Mars-Earth force:
+
 - $\vec{r}_\text{Mars→Earth} = [-78.3 \times 10^9, 0, 0] \text{ m}$
 - $|\vec{r}_\text{Mars→Earth}| = 78.3 \times 10^9 \text{ m}$
 - $m_\text{Mars} = 6.39 \times 10^{23} \text{ kg}$
@@ -278,6 +289,7 @@ This is Earth's orbital period (one year).
 Let's track Earth's position and velocity over a short time interval using different integration methods.
 
 **Initial conditions:**
+
 - Earth position: $[149.6 \times 10^9, 0, 0] \text{ m}$
 - Earth velocity: $[0, 29.78 \times 10^3, 0] \text{ m/s}$
 - Acceleration due to Sun: $[-5.93 \times 10^{-3}, 0, 0] \text{ m/s}^2$
@@ -298,7 +310,8 @@ $$\vec{x}_\text{new} = [149.6 \times 10^9, 0, 0] + [0, 29.78 \times 10^3, 0] \ti
 $$\vec{x}_\text{new} = [149.6 \times 10^9, 0, 0] + [0, 1.07 \times 10^8, 0]$$
 $$\vec{x}_\text{new} = [149.6 \times 10^9, 1.07 \times 10^8, 0] \text{ meters}$$
 
-After this first hour, Earth has moved slightly along the y-axis and gained a small negative x-component to its velocity, beginning to curve its path.
+After this first hour, Earth has moved slightly along the y-axis and gained a small negative x-component to its
+velocity, beginning to curve its path.
 
 ### Verlet Integration
 
@@ -326,7 +339,8 @@ $$\vec{v}_\text{new} = [-10.67, 29.78 \times 10^3, 0] + \frac{1}{2} \times [-5.9
 $$\vec{v}_\text{new} = [-10.67, 29.78 \times 10^3, 0] + [-10.67, -7.61, 0]$$
 $$\vec{v}_\text{new} = [-21.34, 29.78 \times 10^3, 0] \text{ m/s (y-component change is negligible)}$$
 
-The Verlet method provides a more accurate trajectory by incorporating acceleration into the position update and recalculating forces at intermediate positions.
+The Verlet method provides a more accurate trajectory by incorporating acceleration into the position update and
+recalculating forces at intermediate positions.
 
 ### Runge-Kutta 4 Method
 
@@ -339,6 +353,7 @@ $$\vec{k}_4 = dt \times f(t + dt, \vec{y} + \vec{k}_3)$$
 $$\vec{y}(t+dt) = \vec{y}(t) + \frac{\vec{k}_1 + 2\vec{k}_2 + 2\vec{k}_3 + \vec{k}_4}{6}$$
 
 Where:
+
 - $\vec{y}$ is the state vector [position, velocity]
 - $f$ is the derivative function returning [velocity, acceleration]
 
@@ -373,6 +388,7 @@ When two bodies collide, we use conservation of momentum:
 **Example: Earth-Mars Collision**
 
 Initial conditions:
+
 - Earth: mass = $5.972 \times 10^{24}$ kg, velocity = $[0, 29.78 \times 10^3, 0]$ m/s
 - Mars: mass = $6.39 \times 10^{23}$ kg, velocity = $[0, 24.07 \times 10^3, 0]$ m/s
 
@@ -445,6 +461,7 @@ If we want to view the solar system from a point (200, 100, 300) looking at the 
 Let's track Earth's orbit around the Sun for one day (24 hours) with 1-hour steps:
 
 **Initial conditions:**
+
 - Sun mass: $1.989 \times 10^{30}$ kg, position: [0, 0, 0], fixed
 - Earth mass: $5.972 \times 10^{24}$ kg
 - Initial position: $[149.6 \times 10^9, 0, 0]$ m
@@ -452,25 +469,29 @@ Let's track Earth's orbit around the Sun for one day (24 hours) with 1-hour step
 - Time step: 3600 seconds (1 hour)
 - Steps: 24 (1 day)
 
-Using the Verlet integrator:
+  Using the Verlet integrator:
 
 Hour 0:
+
 - Position: $[149.6 \times 10^9, 0, 0]$ m
 - Velocity: $[0, 29.78 \times 10^3, 0]$ m/s
 - Acceleration: $[-5.93 \times 10^{-3}, 0, 0]$ m/s²
 
 Hour 1:
+
 - Position: $[149.6 \times 10^9, 1.07 \times 10^8, 0]$ m
 - Velocity: $[-21.34, 29.78 \times 10^3, 0]$ m/s
 - Acceleration: $[-5.93 \times 10^{-3}, -4.23 \times 10^{-6}, 0]$ m/s²
 
 Hour 2:
+
 - Position: $[149.6 \times 10^9 - 7.68 \times 10^4, 2.14 \times 10^8, 0]$ m
 - Velocity: $[-42.68, 29.78 \times 10^3, 0]$ m/s
 
 ...and so on.
 
 After 24 hours:
+
 - Position: $[149.59 \times 10^9, 2.57 \times 10^9, 0]$ m
 - The Earth has moved about 2.57 million km along its orbit
 - Earth's position vector has rotated by about 0.98 degrees
@@ -519,6 +540,7 @@ export function calculateGravitationalForce(body1, body2, G) {
 ```
 
 This implementation:
+
 1. Calculates the displacement vector between two bodies
 2. Computes the distance squared (optimization to avoid square root)
 3. Enforces a minimum distance to prevent numerical instability
@@ -528,7 +550,8 @@ This implementation:
 
 ### Matrix Implementation for Integration
 
-Let's consider the mathematical formulation of the Verlet integrator. In linear algebra terms, the Verlet method can be represented as:
+Let's consider the mathematical formulation of the Verlet integrator. In linear algebra terms, the Verlet method can be
+represented as:
 
 $$\begin{bmatrix}
 \vec{x}(t+\Delta t) \\
@@ -552,24 +575,28 @@ $$\begin{bmatrix}
 \end{bmatrix}$$
 
 Where:
+
 - $\vec{x}$ is position
 - $\vec{v}$ is velocity
 - $\vec{a}$ is acceleration
 - $\vec{f}$ is the new acceleration calculated at the new position
 - $\Delta t$ is the time step
 
-This matrix formulation shows how the Verlet method is a second-order approximation, making it more stable than the first-order Euler method.
+This matrix formulation shows how the Verlet method is a second-order approximation, making it more stable than the
+first-order Euler method.
 
 ## Error Analysis in Numerical Integration
 
 The error properties of the different integrators can be analyzed mathematically:
 
 ### Euler Method
+
 - Local truncation error: $O(\Delta t^2)$
 - Global truncation error: $O(\Delta t)$
 - Stability region: Limited
 
-The error per step in the Euler method is proportional to $\Delta t^2$, but these errors accumulate, resulting in a global error proportional to $\Delta t$. This makes the Euler method less suitable for long-term simulations.
+The error per step in the Euler method is proportional to $\Delta t^2$, but these errors accumulate, resulting in a
+global error proportional to $\Delta t$. This makes the Euler method less suitable for long-term simulations.
 
 Mathematical representation of the error:
 $$\vec{x}(t+\Delta t) = \vec{x}(t) + \Delta t \vec{v}(t) + \frac{\Delta t^2}{2}\vec{a}(t) + O(\Delta t^3)$$
@@ -577,6 +604,7 @@ $$\vec{x}(t+\Delta t) = \vec{x}(t) + \Delta t \vec{v}(t) + \frac{\Delta t^2}{2}\
 The Euler method only uses the first two terms, introducing an error of order $\Delta t^2$ at each step.
 
 ### Verlet Method
+
 - Local truncation error: $O(\Delta t^4)$
 - Global truncation error: $O(\Delta t^2)$
 - Stability region: Much larger than Euler
@@ -584,18 +612,22 @@ The Euler method only uses the first two terms, introducing an error of order $\
 Mathematical representation of the error:
 $$\vec{x}(t+\Delta t) = \vec{x}(t) + \Delta t \vec{v}(t) + \frac{\Delta t^2}{2}\vec{a}(t) + \frac{\Delta t^3}{6}\frac{d\vec{a}}{dt}(t) + O(\Delta t^4)$$
 
-The Verlet method includes the $\Delta t^2$ term and implicitly accounts for the $\Delta t^3$ term, resulting in a much smaller error.
+The Verlet method includes the $\Delta t^2$ term and implicitly accounts for the $\Delta t^3$ term, resulting in a much
+smaller error.
 
 ### Runge-Kutta 4 Method
+
 - Local truncation error: $O(\Delta t^5)$
 - Global truncation error: $O(\Delta t^4)$
 - Stability region: Excellent
 
-The RK4 method uses a weighted average of four evaluations to approximate the solution more accurately. It effectively includes terms up to $\Delta t^4$ in the Taylor series expansion, resulting in a local error of order $\Delta t^5$.
+The RK4 method uses a weighted average of four evaluations to approximate the solution more accurately. It effectively
+includes terms up to $\Delta t^4$ in the Taylor series expansion, resulting in a local error of order $\Delta t^5$.
 
 ## Energy Conservation Analysis
 
-One way to verify the accuracy of a numerical integrator is to check how well it conserves energy in a closed system. For a gravitational system, the total energy should remain constant:
+One way to verify the accuracy of a numerical integrator is to check how well it conserves energy in a closed system.
+For a gravitational system, the total energy should remain constant:
 
 $$E_\text{total} = E_\text{kinetic} + E_\text{potential} = \text{constant}$$
 
@@ -604,6 +636,7 @@ $$E_\text{kinetic} = \frac{1}{2}mv^2$$
 $$E_\text{potential} = -\frac{GMm}{r}$$
 
 For a system with the Sun and Earth:
+
 - Sun mass ($M$): $1.989 \times 10^{30}$ kg
 - Earth mass ($m$): $5.972 \times 10^{24}$ kg
 - Initial distance ($r$): $149.6 \times 10^9$ m
@@ -619,6 +652,7 @@ $$E_\text{total} = 2.65 \times 10^{33} - 5.30 \times 10^{33} = -2.65 \times 10^{
 The negative total energy indicates a bound orbit (elliptical rather than parabolic or hyperbolic).
 
 After running the simulation for one day with different integrators, we would find:
+
 - Euler: Total energy might change by ~0.1%
 - Verlet: Total energy might change by ~0.001%
 - RK4: Total energy might change by ~0.0001%
@@ -641,7 +675,8 @@ This demonstrates the superior energy conservation properties of the Verlet and 
 
    Calculate the force vector and compare it to the force between the Sun and Earth.
 
-2. **Matrix Transformation Exercise**: Apply a scaling and rotation matrix to transform Earth's position. Use a scale factor of $10^{-9}$ and a rotation of 45° around the z-axis.
+2. **Matrix Transformation Exercise**: Apply a scaling and rotation matrix to transform Earth's position. Use a scale
+   factor of $10^{-9}$ and a rotation of 45° around the z-axis.
 
    Create the scaling matrix:
    $$S = \begin{bmatrix}
@@ -669,15 +704,18 @@ This demonstrates the superior energy conservation properties of the Verlet and 
 
    Apply this to Earth's position $[149.6 \times 10^9, 0, 0]$ and compute the result.
 
-3. **System of Equations Exercise**: Set up the system of linear equations representing the positions and velocities of the Earth-Moon system after one time step.
+3. **System of Equations Exercise**: Set up the system of linear equations representing the positions and velocities of
+   the Earth-Moon system after one time step.
 
    Using the Verlet method:
    $$\vec{x}_\text{Earth}(t+\Delta t) = \vec{x}_\text{Earth}(t) + \vec{v}_\text{Earth}(t) \times \Delta t + \frac{1}{2} \times \vec{a}_\text{Earth}(t) \times \Delta t^2$$
    $$\vec{v}_\text{Earth}(t+\Delta t) = \vec{v}_\text{Earth}(t) + \frac{1}{2} \times (\vec{a}_\text{Earth}(t) + \vec{a}_\text{Earth}(t+\Delta t)) \times \Delta t$$
 
-   Similar equations apply for the Moon. Write out the full system of equations, including the gravitational interactions between the Sun, Earth, and Moon.
+   Similar equations apply for the Moon. Write out the full system of equations, including the gravitational
+   interactions between the Sun, Earth, and Moon.
 
-4. **Numerical Integration Comparison**: Track the position of Venus over 10 days using all three integration methods and compare the results.
+4. **Numerical Integration Comparison**: Track the position of Venus over 10 days using all three integration methods
+   and compare the results.
 
    Use these initial conditions:
     - Venus position: $[108.2 \times 10^9, 0, 0]$ m
@@ -688,7 +726,8 @@ This demonstrates the superior energy conservation properties of the Verlet and 
 
    Compare the final positions and velocities from each method, as well as the conservation of energy.
 
-5. **Orbital Parameters Calculation**: Use linear algebra to calculate the semi-major axis, eccentricity, and orbital period of Mars using its position and velocity vectors.
+5. **Orbital Parameters Calculation**: Use linear algebra to calculate the semi-major axis, eccentricity, and orbital
+   period of Mars using its position and velocity vectors.
 
    Given:
     - Mars position: $[227.9 \times 10^9, 0, 0]$ m
@@ -702,4 +741,5 @@ This demonstrates the superior energy conservation properties of the Verlet and 
     - Semi-major axis: $a = \frac{h^2}{GM_\text{Sun}(1-e^2)}$
     - Orbital period: $T = 2\pi \sqrt{\frac{a^3}{GM_\text{Sun}}}$
 
-These exercises demonstrate how linear algebra concepts are applied in gravitational physics simulations, providing practical context for abstract mathematical principles.
+These exercises demonstrate how linear algebra concepts are applied in gravitational physics simulations, providing
+practical context for abstract mathematical principles.
