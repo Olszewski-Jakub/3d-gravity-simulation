@@ -42,6 +42,31 @@ export default function Home() {
       color: '#FFB142',
       texture: 'sun.jpg',
     },
+    // Mercury
+    {
+      id: 'mercury',
+      name: 'Mercury',
+      type: 'planet',
+      mass: 3.3011e23, // kg
+      radius: 2439700, // meters
+      position: [57.9e9, 0, 0], // 57.9 million km from sun
+      velocity: [0, 47.36e3, 0], // 47.36 km/s orbital velocity
+      color: '#A5A5A5', // Mercury's grayish color
+      texture: 'mercury.jpg',
+    },
+    // Venus
+    {
+      id: 'venus',
+      name: 'Venus',
+      type: 'planet',
+      mass: 4.8675e24, // kg
+      radius: 6051800, // meters
+      position: [108.2e9, 0, 0], // 108.2 million km from sun
+      velocity: [0, 35.02e3, 0], // 35.02 km/s orbital velocity
+      color: '#E6C35A', // Venus's yellowish color
+      texture: 'venus.jpg',
+    },
+    // Earth
     {
       id: 'earth',
       name: 'Earth',
@@ -53,6 +78,7 @@ export default function Home() {
       color: '#1289A7',
       texture: 'earth.jpg',
     },
+    // Mars
     {
       id: 'mars',
       name: 'Mars',
@@ -64,6 +90,54 @@ export default function Home() {
       color: '#D0312D',
       texture: 'mars.jpg',
     },
+    // Jupiter
+    {
+      id: 'jupiter',
+      name: 'Jupiter',
+      type: 'planet',
+      mass: 1.898e27, // kg
+      radius: 69911000, // meters
+      position: [778.6e9, 0, 0], // 778.6 million km from sun
+      velocity: [0, 13.07e3, 0], // 13.07 km/s orbital velocity
+      color: '#E39E5B', // Jupiter's orangish color
+      texture: 'jupiter.jpg',
+    },
+    // Saturn
+    {
+      id: 'saturn',
+      name: 'Saturn',
+      type: 'planet',
+      mass: 5.683e26, // kg
+      radius: 58232000, // meters
+      position: [1433.5e9, 0, 0], // 1.4335 billion km from sun
+      velocity: [0, 9.69e3, 0], // 9.69 km/s orbital velocity
+      color: '#F4D4A9', // Saturn's pale yellow color
+      texture: 'saturn.jpg',
+    },
+    // Uranus
+    {
+      id: 'uranus',
+      name: 'Uranus',
+      type: 'planet',
+      mass: 8.681e25, // kg
+      radius: 25362000, // meters
+      position: [2872.5e9, 0, 0], // 2.8725 billion km from sun
+      velocity: [0, 6.81e3, 0], // 6.81 km/s orbital velocity
+      color: '#A4D2E0', // Uranus's pale blue color
+      texture: 'uranus.jpg',
+    },
+    // Neptune
+    {
+      id: 'neptune',
+      name: 'Neptune',
+      type: 'planet',
+      mass: 1.024e26, // kg
+      radius: 24622000, // meters
+      position: [4495.1e9, 0, 0], // 4.4951 billion km from sun
+      velocity: [0, 5.43e3, 0], // 5.43 km/s orbital velocity
+      color: '#4B70DD', // Neptune's blue color
+      texture: 'neptune.jpg',
+    }
   ]);
 
   // Functions to update the simulation

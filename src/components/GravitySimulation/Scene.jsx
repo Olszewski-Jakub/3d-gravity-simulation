@@ -14,10 +14,10 @@ const SCALE_FACTOR = 1e-9;
 const VISUALIZATION_SCALE_FACTOR = 1e-9 ; // 1000x more compact for visualization
 
 // Scale factor for radii to make celestial bodies visually meaningful
-const RADIUS_SCALE_MULTIPLIER = 20;
+const RADIUS_SCALE_MULTIPLIER = 40;
 
 // Additional scale factor for stars to make them more visible
-const STAR_SCALE_MULTIPLIER = 1;
+const STAR_SCALE_MULTIPLIER = 10;
 
 const Scene = () => {
     const { camera } = useThree();
@@ -66,7 +66,6 @@ const Scene = () => {
 
     // Scale positions for rendering
     const scaledBodies = useMemo(() => {
-        // Calculate the scene center for centering the view
         const sceneCenter = [
             (sceneBounds.min[0] + sceneBounds.max[0]) / 2,
             (sceneBounds.min[1] + sceneBounds.max[1]) / 2,
@@ -74,25 +73,18 @@ const Scene = () => {
         ];
 
         return bodies.map(body => {
-            // Apply additional scaling for stars
-            const typeMultiplier = body.type === 'star' ? STAR_SCALE_MULTIPLIER * 2 : 1;
+            const typeMultiplier = body.type === 'star' ?   1 : STAR_SCALE_MULTIPLIER;
+            const minStarSize = body.type === 'star' ? 2 : 0.5;
 
-            // Make sure the Sun is rendered with minimum size
-            const minStarSize = body.type === 'star' ? 5 : 0.5;
-
-            // Calculate position relative to scene center for better visibility
             const centeredPosition = [
                 body.position[0] - sceneCenter[0],
                 body.position[1] - sceneCenter[1],
                 body.position[2] - sceneCenter[2]
             ];
 
-            // Apply EXTREME compression to distances for visualization
-            // This will make planets appear much closer to the sun than they actually are
             return {
                 ...body,
                 scaledPosition: centeredPosition.map(pos => pos * VISUALIZATION_SCALE_FACTOR),
-                // Scale radius with a minimum size based on type
                 scaledRadius: Math.max(
                     body.radius * SCALE_FACTOR * RADIUS_SCALE_MULTIPLIER * typeMultiplier,
                     minStarSize + (body.mass * 1e-30) * typeMultiplier

@@ -61,13 +61,13 @@ const ClientWrapper = ({
             >
                 <Scene />
                 <CustomOrbitControls />
-                <Stars radius={300} depth={60} count={5000} factor={7} saturation={0} fade />
+                {/*<Stars radius={300} depth={60} count={5000} factor={7} saturation={0} fade />*/}
 
                 {/* Enhanced lighting */}
                 <ambientLight intensity={0.8} />
                 <hemisphereLight intensity={0.8} color="#ffffff" groundColor="#000000" />
                 <pointLight position={[0, 0, 0]} intensity={5} distance={1000} />
-                <Stars radius={300} depth={60} count={5000} factor={7} saturation={0} fade />
+                {/*<Stars radius={300} depth={60} count={5000} factor={7} saturation={0} fade />*/}
 
                 {/* Enhanced lighting */}
                 <ambientLight intensity={0.4} />
