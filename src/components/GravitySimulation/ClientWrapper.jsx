@@ -62,7 +62,7 @@ const ClientWrapper = ({
         >
             <Canvas
                 camera={{
-                    position: [sunPosition[0]+300, sunPosition[1] + 100, sunPosition[2] + 100],
+                    position: [sunPosition[0]+300, sunPosition[1], sunPosition[2] + 700],
                     fov: 60,
                     near: 0.1,
                     far: 1000000000000000000000000
@@ -79,7 +79,7 @@ const ClientWrapper = ({
                 <pointLight position={sunPosition} intensity={5} distance={1000} />
 
                 {/* Additional stars background */}
-                <Stars radius={300} depth={60} count={5000} factor={7} saturation={0} fade />
+                <Stars radius={4000} depth={60} count={5000} factor={7} saturation={0} fade />
             </Canvas>
         </SimulationProvider>
     );
