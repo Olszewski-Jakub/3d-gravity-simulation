@@ -18,7 +18,7 @@ This project provides an interactive way to explore the mathematics behind orbit
 
 Experience the simulator directly in your browser:
 
-🚀 [**Launch Gravity Simulator Web App**](https://3d-gravity-simulation.vercel.app)
+🚀 [**Launch Gravity Simulator Web App**](https://gravity-simulator.jakubolszewski.dev)
 
 ### Local Installation
 
