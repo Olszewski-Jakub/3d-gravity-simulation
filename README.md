@@ -73,9 +73,9 @@ This is a unit vector along the positive x-axis.
 
 If we needed to add a small correction to Earth's velocity:
 
-$$\vec{v} = \vec{v}_{current} + \vec{v}_{correction}$$
+$$\vec{v}_{new} = \vec{v}_{current} + \vec{v}_{correction}$$
 $$\vec{v}_{new} = [0, 29.78 \times 10^3, 0] + [100, 0, 50]$$
-$$\vec{v}_{new} = [100, 29.78 \times 10^3, 50] { m/s}$$
+$$\vec{v}_{new} = [100, 29.78 \times 10^3, 50] \text{ m/s}$$
 
 #### 5. Dot Product (Work or Projection)
 
