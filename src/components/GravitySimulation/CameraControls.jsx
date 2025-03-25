@@ -28,26 +28,21 @@ const CameraControls = () => {
     useFrame(({ controls }, delta) => {
         if (!isFollowingRef.current || !selectedBodyId) return;
 
-        // Find the selected body
         const selectedBody = bodies.find(body => body.id === selectedBodyId);
         if (!selectedBody) return;
 
-        // Scale the position to match the scene scale
         const scaledPosition = selectedBody.position.map(pos => pos * SCALE_FACTOR);
         targetRef.current.set(scaledPosition[0], scaledPosition[1], scaledPosition[2]);
 
-        // Update the orbital controls target (if using OrbitControls)
         if (controls) {
-            // This works with the OrbitControls from drei
             controls.target.lerp(targetRef.current, 0.1);
             controls.update();
         } else {
-            // Direct camera manipulation if no controls
             camera.lookAt(targetRef.current);
         }
     });
 
-    return null; // This component doesn't render anything visually
+    return null;
 };
 
 export default CameraControls;

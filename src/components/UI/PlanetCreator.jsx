@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { calculateOrbitalVelocity } from '../../lib/physics/gravitationalForce';
+import { calculateOrbitalVelocity } from '@/lib/physics/gravitationalForce';
 
 const PlanetCreator = ({
                            onAdd,
@@ -11,22 +11,19 @@ const PlanetCreator = ({
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
-    // Default planet options
     const defaultPlanet = {
         name: '',
         type: 'planet',
-        mass: 5.972e24, // Earth-like mass
-        radius: 6371000, // Earth-like radius
+        mass: 5.972e24,
+        radius: 6371000,
         position: [0, 0, 0],
         velocity: [0, 0, 0],
         color: '#3498db',
         texture: '',
     };
 
-    // Planet form state
     const [formState, setFormState] = useState(defaultPlanet);
 
-    // Planet types for select
     const planetTypes = [
         { value: 'planet', label: 'Planet' },
         { value: 'star', label: 'Star' },
@@ -48,14 +45,12 @@ const PlanetCreator = ({
         { color: '#FFFFFF', name: 'White' },
     ];
 
-    // Load selected body data when selected
     useEffect(() => {
         if (selectedBody) {
             const body = celestialBodies.find(body => body.id === selectedBody);
             if (body) {
                 setFormState({
                     ...body,
-                    // Clone arrays to prevent modifying the original
                     position: [...body.position],
                     velocity: [...body.velocity]
                 });
@@ -63,7 +58,6 @@ const PlanetCreator = ({
                 setIsCreating(false);
             }
         } else {
-            // Reset form if nothing is selected
             if (isEditing) {
                 setIsEditing(false);
                 setFormState(defaultPlanet);
@@ -71,11 +65,9 @@ const PlanetCreator = ({
         }
     }, [selectedBody, celestialBodies]);
 
-    // Handle form input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
-        // Handle nested properties (position, velocity)
         if (name.includes('.')) {
             const [parent, index] = name.split('.');
             setFormState(prev => {
@@ -84,7 +76,6 @@ const PlanetCreator = ({
                 return { ...prev, [parent]: updated };
             });
         } else if (name === 'mass' || name === 'radius') {
-            // Handle scientific notation for large numbers
             let parsedValue;
             try {
                 parsedValue = value.toLowerCase().includes('e')
@@ -99,12 +90,10 @@ const PlanetCreator = ({
         }
     };
 
-    // Handle color selection
     const handleColorSelect = (color) => {
         setFormState(prev => ({ ...prev, color }));
     };
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -116,35 +105,28 @@ const PlanetCreator = ({
             setIsCreating(false);
         }
 
-        // Reset form
         setFormState(defaultPlanet);
     };
 
-    // Calculate orbital velocity around a central body
     const calculateOrbit = () => {
-        // Find the most massive body to orbit around (typically a star)
         const centralBody = celestialBodies.reduce((prev, current) =>
             prev.mass > current.mass ? prev : current
         );
 
-        // Default distance from central body (adjust as needed)
         const distanceFromCenter = centralBody.radius * 10;
 
-        // Calculate position
         const newPosition = [
             centralBody.position[0] + distanceFromCenter,
             centralBody.position[1],
             centralBody.position[2]
         ];
 
-        // Calculate required velocity for a circular orbit
         const orbitSpeed = calculateOrbitalVelocity(
             centralBody.mass,
             distanceFromCenter,
             6.67430e-11 // G constant
         );
 
-        // Velocity perpendicular to the radius vector for a circular orbit
         const newVelocity = [
             0,
             orbitSpeed,
@@ -158,7 +140,6 @@ const PlanetCreator = ({
         }));
     };
 
-    // Apply presets based on type
     const applyTypePreset = (type) => {
         let preset = {};
 
@@ -216,13 +197,11 @@ const PlanetCreator = ({
         }));
     };
 
-    // Handle type change
     const handleTypeChange = (e) => {
         const newType = e.target.value;
         applyTypePreset(newType);
     };
 
-    // UI states
     const renderForm = isCreating || isEditing;
     const formTitle = isEditing ? 'Edit Celestial Body' : 'Create Celestial Body';
 

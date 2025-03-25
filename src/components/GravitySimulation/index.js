@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import ErrorBoundary from './ErrorBoundary';
 import ClientWrapper from './ClientWrapper';
+import IntegratorErrorHandler from '../UI/IntegratorErrorHandler';
 import { eulerIntegrator, verletIntegrator, rungeKutta4Integrator } from '../../lib/physics/integrators';
 import { areColliding, handleCollision } from '../../lib/physics/gravitationalForce';
 import { stabilizeOrbits, enforceSafeDistances } from '../../lib/physics/orbitStabilizer';
@@ -20,7 +21,8 @@ const distanceBetweenPoints = (p1, p2) => {
 const GravitySimulation = ({
                                celestialBodies,
                                simulationState,
-                               onSelectBody
+                               onSelectBody,
+                               enableDebug = true // Enable debugging by default
                            }) => {
     // State to hold the current simulation data
     const [bodies, setBodies] = useState(celestialBodies || []);
@@ -232,8 +234,10 @@ const GravitySimulation = ({
                     showOrbitalPaths={showOrbitalPaths}
                     onSelectBody={onSelectBody}
                     selectedBodyId={selectedBody}
+                    enableDebug={enableDebug}
                 />
             </ErrorBoundary>
+            <IntegratorErrorHandler />
         </div>
     );
 };

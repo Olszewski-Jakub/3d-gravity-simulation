@@ -10,30 +10,62 @@ import { calculateNetForce, calculateAcceleration } from './gravitationalForce';
  * @returns {Array} - Updated array of celestial bodies
  */
 export function eulerIntegrator(bodies, dt, G) {
-    return bodies.map(body => {
-        // Calculate net force on this body
-        const force = calculateNetForce(body, bodies, G);
+    // Create a deep copy to prevent mutation issues
+    const bodiesCopy = JSON.parse(JSON.stringify(bodies));
 
-        // Calculate acceleration (F = ma, so a = F/m)
-        const acceleration = calculateAcceleration(force, body.mass);
+    return bodiesCopy.map(body => {
+        try {
+            // Special handling for stars - keep them fixed
+            if (body.type === 'star') {
+                return {
+                    ...body,
+                    velocity: [0, 0, 0] // Fix stars in place like in verletIntegrator
+                };
+            }
 
-        // Update velocity (v = v₀ + a·dt)
-        const newVelocity = [
-            body.velocity[0] + acceleration[0] * dt,
-            body.velocity[1] + acceleration[1] * dt,
-            body.velocity[2] + acceleration[2] * dt
-        ];
-        // Update position (x = x₀ + v·dt)
-        const newPosition = [
-            body.position[0] + body.velocity[0] * dt,
-            body.position[1] + body.velocity[1] * dt,
-            body.position[2] + body.velocity[2] * dt
-        ];
-        return {
-            ...body,
-            position: newPosition,
-            velocity: newVelocity
-        };
+            // Calculate net force on this body
+            const force = calculateNetForce(body, bodiesCopy, G);
+
+            // Calculate acceleration (F = ma, so a = F/m)
+            const acceleration = calculateAcceleration(force, body.mass);
+
+            // Update velocity (v = v₀ + a·dt)
+            let newVelocity = [
+                body.velocity[0] + acceleration[0] * dt,
+                body.velocity[1] + acceleration[1] * dt,
+                body.velocity[2] + acceleration[2] * dt
+            ];
+
+            // Safety check for invalid velocity values
+            newVelocity = newVelocity.map(v => {
+                if (!isFinite(v)) return 0;
+                if (Math.abs(v) > 1e10) return Math.sign(v) * 1e10; // Clamp extremely high velocities
+                return v;
+            });
+
+            // Update position (x = x₀ + v·dt)
+            let newPosition = [
+                body.position[0] + body.velocity[0] * dt,
+                body.position[1] + body.velocity[1] * dt,
+                body.position[2] + body.velocity[2] * dt
+            ];
+
+            // Safety check for invalid position values
+            newPosition = newPosition.map((p, i) => {
+                if (!isFinite(p)) return body.position[i];
+                if (Math.abs(p) > 1e20) return Math.sign(p) * 1e20; // Clamp extremely distant positions
+                return p;
+            });
+
+            return {
+                ...body,
+                position: newPosition,
+                velocity: newVelocity
+            };
+        } catch (error) {
+            console.error(`Physics calculation error for ${body.name || 'unnamed body'}:`, error);
+            return body; // Return unchanged body if calculation fails
+        }
     });
 }
 

@@ -225,15 +225,15 @@ export default function Home() {
           {/* Side Panel for Editing and Information */}
           <div className="w-80 bg-space-medium p-4 overflow-y-auto">
             <div className="space-y-6">
-              <SystemPresets onSelect={loadPresetSystem} />
+              {/*<SystemPresets onSelect={loadPresetSystem} />*/}
 
-              <PlanetCreator
-                  onAdd={addCelestialBody}
-                  onUpdate={updateCelestialBody}
-                  onRemove={removeCelestialBody}
-                  selectedBody={simulationState.selectedBody}
-                  celestialBodies={celestialBodies}
-              />
+              {/*<PlanetCreator*/}
+              {/*    onAdd={addCelestialBody}*/}
+              {/*    onUpdate={updateCelestialBody}*/}
+              {/*    onRemove={removeCelestialBody}*/}
+              {/*    selectedBody={simulationState.selectedBody}*/}
+              {/*    celestialBodies={celestialBodies}*/}
+              {/*/>*/}
 
               <InfoPanel
                   selectedBody={simulationState.selectedBody}

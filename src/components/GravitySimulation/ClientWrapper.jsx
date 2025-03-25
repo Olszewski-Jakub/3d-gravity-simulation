@@ -21,7 +21,6 @@ const ClientWrapper = ({
                        }) => {
     const [canUseWebGL, setCanUseWebGL] = useState(true);
 
-    // Check if WebGL is available
     useEffect(() => {
         if (typeof window !== 'undefined') {
             try {
@@ -35,23 +34,19 @@ const ClientWrapper = ({
         }
     }, []);
 
-    // Find Sun position for initial camera focus
     const sunPosition = React.useMemo(() => {
         const sun = bodies.find(body => body.type === 'star' && body.name === 'Sun');
         if (sun) {
-            // Apply scaling factor to make the scene more visible
             const SCALE_FACTOR = 1e-9;
             return sun.position.map(pos => pos * SCALE_FACTOR);
         }
-        return [0, 0, 0]; // Default if Sun not found
+        return [0, 0, 0];
     }, [bodies]);
 
-    // Use fallback renderer if WebGL is not available
     if (!canUseWebGL) {
         return <FallbackRenderer bodies={bodies} />;
     }
 
-    // Use React Three Fiber if WebGL is available
     return (
         <SimulationProvider
             bodies={bodies}
