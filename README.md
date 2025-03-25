@@ -18,12 +18,12 @@ This project provides an interactive way to explore the mathematics behind orbit
 
 Experience the simulator directly in your browser:
 
-🚀 [**Launch Gravity Simulator Web App**](http://3d-gravity-simulation.vercel.app)
+🚀 [**Launch Gravity Simulator Web App**](https://3d-gravity-simulation.vercel.app)
 
 ### Local Installation
 
 ```bash
-git clone https://github.com/yourusername/gravity-simulator.git
+git clone https://github.com/Olszewski-Jakub/3d-gravity-simulation.git
 cd gravity-simulator
 npm install
 npm start
@@ -54,4 +54,3 @@ This guide covers:
 - Orbital mechanics
 - Numerical integration methods
 - Step-by-step simulation examples
-- Educational exercises
