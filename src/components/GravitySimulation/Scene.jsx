@@ -118,28 +118,6 @@ const Scene = () => {
                 <OrbitalPath key={`path-${bodyId}`} points={path} />
             ))}
 
-            {/* Separate rendering for stars to ensure visibility */}
-            {scaledBodies
-                .filter(body => body.type === 'star')
-                .map(star => (
-                    <group key={`star-special-${star.id}`} position={star.scaledPosition}>
-                        <mesh>
-                            <sphereGeometry args={[25, 32, 32]} />
-                            <meshBasicMaterial
-                                color={star.color || "#FFB142"}
-                                emissive={star.color || "#FFB142"}
-                                emissiveIntensity={3.0}
-                            />
-                        </mesh>
-                        <pointLight
-                            intensity={10}
-                            distance={500}
-                            color={star.color || "#FFB142"}
-                        />
-                    </group>
-                ))
-            }
-
             {/* Render all celestial bodies */}
             {scaledBodies.map(body => (
                 <CelestialBody
@@ -150,7 +128,7 @@ const Scene = () => {
                 />
             ))}
 
-            {/* Add light sources at star positions */}
+             Add light sources at star positions
             {scaledBodies
                 .filter(body => body.type === 'star')
                 .map(star => (
@@ -164,7 +142,7 @@ const Scene = () => {
                 ))
             }
 
-            {/* Global directional light */}
+             Global directional light
             <directionalLight
                 position={[10, 20, 30]}
                 intensity={0.8}
