@@ -61,7 +61,7 @@ const TutorialModal = () => {
         return (
             <button
                 onClick={() => setIsOpen(true)}
-                className="fixed bottom-4 right-4 bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-full shadow-lg z-10"
+                className="fixed bottom-20 md:bottom-4 right-4 bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-full shadow-lg z-10"
                 title="Show Tutorial"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

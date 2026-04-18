@@ -3,8 +3,8 @@ import React from 'react';
 
 const Header = () => {
     return (
-        <header className="bg-black/40 backdrop-blur-md border-b border-white/10 text-white py-3 px-6 shadow-md">
-            <div className="container mx-auto flex justify-between items-center">
+        <header className="h-14 bg-black/40 backdrop-blur-md border-b border-white/10 text-white px-6 shadow-md flex items-center">
+            <div className="container mx-auto flex justify-between items-center w-full">
                 <div className="flex items-center space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <circle cx="12" cy="12" r="10"></circle>

@@ -7,12 +7,15 @@ const SimulationControls = ({
                                 showOrbitalPaths,
                                 enableCollisions,
                                 gravitationalConstant,
+                                focusLock,
+                                selectedBody,
                                 onUpdateTimeScale,
                                 onTogglePause,
                                 onUpdateIntegrationMethod,
                                 onToggleOrbitalPaths,
                                 onToggleCollisions,
-                                onUpdateGravitationalConstant
+                                onUpdateGravitationalConstant,
+                                onToggleFocusLock,
                             }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [showIntegratorInfo, setShowIntegratorInfo] = useState(false);
@@ -234,6 +237,29 @@ const SimulationControls = ({
                                 <span
                                     className={`absolute w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
                                         enableCollisions ? 'translate-x-6' : 'translate-x-1'
+                                    }`}
+                                    style={{ top: '2px' }}
+                                />
+                            </button>
+                        </div>
+
+                        {/* Focus Lock Toggle */}
+                        <div className={`flex items-center justify-between ${!selectedBody ? 'opacity-40' : ''}`}>
+                            <span className="text-sm">Focus Lock
+                                {!selectedBody && <span className="text-xs text-gray-500 ml-1">(select a body)</span>}
+                            </span>
+                            <button
+                                onClick={selectedBody ? onToggleFocusLock : undefined}
+                                disabled={!selectedBody}
+                                className={`w-12 h-6 rounded-full relative transition-colors ${
+                                    focusLock && selectedBody ? 'bg-purple-500/50' : 'bg-white/10'
+                                }`}
+                                aria-checked={focusLock}
+                                role="switch"
+                            >
+                                <span
+                                    className={`absolute w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
+                                        focusLock && selectedBody ? 'translate-x-6' : 'translate-x-1'
                                     }`}
                                     style={{ top: '2px' }}
                                 />

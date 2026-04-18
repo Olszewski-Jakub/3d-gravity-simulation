@@ -5,6 +5,7 @@ const PlanetCreator = ({
                            onAdd,
                            onUpdate,
                            onRemove,
+                           onClearAll,
                            selectedBody,
                            celestialBodies
                        }) => {
@@ -285,6 +286,23 @@ const PlanetCreator = ({
                         </svg>
                         Create New Body
                     </button>
+
+                    {onClearAll && celestialBodies.length > 0 && (
+                        <button
+                            onClick={() => {
+                                if (window.confirm('Remove all celestial bodies? This cannot be undone.')) {
+                                    onClearAll();
+                                }
+                            }}
+                            className="w-full mt-2 bg-red-900/20 hover:bg-red-900/30 border border-red-700/30 text-red-400 py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            Clear All Bodies
+                        </button>
+                    )}
 
                     {selectedBody && (
                         <div className="grid grid-cols-2 gap-2 mt-2">

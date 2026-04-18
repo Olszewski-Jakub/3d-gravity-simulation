@@ -2,8 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { OrbitControls } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
-import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
 import { useSimulation } from './SimulationContext';
 
 // Scale factor to make the scene more visible (same as in Scene.jsx)
@@ -14,7 +13,7 @@ const SCALE_FACTOR = 1e-9;
  */
 const CustomOrbitControls = ({ initialTarget = [0, 0, 0], ...props }) => {
     const controlsRef = useRef();
-    const { selectedBodyId, bodies } = useSimulation();
+    const { selectedBodyId, bodies, focusLock } = useSimulation();
 
     // Initialize control target on mount
     useEffect(() => {
@@ -40,6 +39,18 @@ const CustomOrbitControls = ({ initialTarget = [0, 0, 0], ...props }) => {
             }
         }
     }, [selectedBodyId, bodies]);
+
+    // Continuously track selected body when focus lock is enabled
+    useFrame(() => {
+        if (focusLock && selectedBodyId && controlsRef.current) {
+            const selectedBody = bodies.find(body => body.id === selectedBodyId);
+            if (selectedBody) {
+                const [x, y, z] = selectedBody.position.map(pos => pos * SCALE_FACTOR);
+                controlsRef.current.target.set(x, y, z);
+                controlsRef.current.update();
+            }
+        }
+    });
 
     return (
         <OrbitControls

@@ -12,15 +12,16 @@ export const SimulationProvider = ({
                                        showOrbitalPaths,
                                        onSelectBody,
                                        selectedBodyId,
+                                       focusLock,
                                        children
                                    }) => {
-    // Create the context value
     const contextValue = {
         bodies,
         orbitalPaths,
         showOrbitalPaths,
         onSelectBody,
-        selectedBodyId
+        selectedBodyId,
+        focusLock,
     };
 
     return (

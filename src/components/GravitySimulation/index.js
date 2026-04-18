@@ -22,7 +22,8 @@ const GravitySimulation = ({
                                celestialBodies,
                                simulationState,
                                onSelectBody,
-                               enableDebug = true // Enable debugging by default
+                               enableDebug = true,
+                               heightClass = 'h-screen'
                            }) => {
     // State to hold the current simulation data
     const [bodies, setBodies] = useState(celestialBodies || []);
@@ -40,7 +41,8 @@ const GravitySimulation = ({
         gravitationalConstant = 6.67430e-11,
         showOrbitalPaths = true,
         enableCollisions = true,
-        selectedBody = null
+        selectedBody = null,
+        focusLock = false,
     } = simulationState || {};
 
     // Find sun ID for initial selection if no body is selected
@@ -226,7 +228,7 @@ const GravitySimulation = ({
 
     // Rendering the 3D scene with error boundary
     return (
-        <div className="w-full h-screen bg-black">
+        <div className={`w-full ${heightClass} bg-black`}>
             <ErrorBoundary>
                 <ClientWrapper
                     bodies={bodies}
@@ -234,6 +236,7 @@ const GravitySimulation = ({
                     showOrbitalPaths={showOrbitalPaths}
                     onSelectBody={onSelectBody}
                     selectedBodyId={selectedBody}
+                    focusLock={focusLock}
                     enableDebug={enableDebug}
                 />
             </ErrorBoundary>

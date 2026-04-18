@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Footer = () => {
+const Footer = ({ className = '' }) => {
     return (
-        <footer className="bg-black/40 backdrop-blur-md border-t border-white/10 text-white py-2 px-6">
+        <footer className={`bg-black/40 backdrop-blur-md border-t border-white/10 text-white py-2 px-6 ${className}`}>
             <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
                 <div className="flex items-center text-xs text-gray-400">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

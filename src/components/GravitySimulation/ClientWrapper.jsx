@@ -17,7 +17,8 @@ const ClientWrapper = ({
                            orbitalPaths,
                            showOrbitalPaths,
                            onSelectBody,
-                           selectedBodyId
+                           selectedBodyId,
+                           focusLock
                        }) => {
     const [canUseWebGL, setCanUseWebGL] = useState(true);
 
@@ -54,6 +55,7 @@ const ClientWrapper = ({
             showOrbitalPaths={showOrbitalPaths}
             onSelectBody={onSelectBody}
             selectedBodyId={selectedBodyId}
+            focusLock={focusLock}
         >
             <Canvas
                 camera={{

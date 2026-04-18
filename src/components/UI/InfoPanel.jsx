@@ -1,10 +1,11 @@
 import React from 'react';
 
-const InfoPanel = ({ selectedBody, celestialBodies }) => {
+const InfoPanel = ({ selectedBody, celestialBodies, compact = false }) => {
+    const cardClass = compact ? '' : 'bg-space-medium rounded-lg p-4 shadow-md';
     // If no body is selected, show summary of all bodies
     if (!selectedBody) {
         return (
-            <div className="bg-space-medium rounded-lg p-4 shadow-md">
+            <div className={cardClass}>
                 <h3 className="text-lg font-semibold mb-2">System Info</h3>
 
                 <div className="space-y-2">
@@ -61,7 +62,7 @@ const InfoPanel = ({ selectedBody, celestialBodies }) => {
     };
 
     return (
-        <div className="bg-space-medium rounded-lg p-4 shadow-md">
+        <div className={cardClass}>
             <h3 className="text-lg font-semibold mb-2">
                 {body.name}
                 <span className="text-sm font-normal ml-2 text-gray-300 capitalize">

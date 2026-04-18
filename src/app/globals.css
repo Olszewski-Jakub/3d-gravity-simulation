@@ -10,6 +10,23 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-space-dark: #050A30;
+  --color-space-medium: #0F1854;
+  --color-space-light: #162082;
+  --color-celestial-sun: #FFB142;
+  --color-celestial-earth: #1289A7;
+  --color-celestial-mars: #D0312D;
+  --color-celestial-moon: #A5A5A5;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0.7; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
 @media (prefers-color-scheme: dark) {
