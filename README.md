@@ -1,56 +1,26 @@
-# Gravity Simulator
+# Orbit Lab
 
-A 3D gravitational physics simulator for learning linear algebra and differential equations through celestial mechanics.
+Orbit Lab is a browser-based 3D gravity simulator for experimenting with Newtonian systems. Choose a preset, adjust the physics, or create a system with your own initial positions and velocities.
 
-## Overview
+## Run locally
 
-This project provides an interactive way to explore the mathematics behind orbital mechanics and gravitational physics. By simulating celestial bodies in 3D space, users can gain intuition for abstract mathematical concepts like vector operations, linear algebra, and numerical integration techniques.
+Requires Node.js 20 or later.
 
-## Key Features
-
-- **Interactive 3D visualization** of gravitational systems
-- **Multiple integration methods** (Euler, Verlet, Runge-Kutta 4)
-- **Real-time parameter adjustment** to explore different scenarios
-
-## Getting Started
-
-### Try It Online
-
-Experience the simulator directly in your browser:
-
-🚀 [**Launch Gravity Simulator Web App**](https://gravity-simulator.jakubolszewski.dev)
-
-### Local Installation
-
-```bash
-git clone https://github.com/Olszewski-Jakub/3d-gravity-simulation.git
-cd gravity-simulator
-npm install
-npm start
+```sh
+npm ci
+npm run dev
 ```
 
-### Setup Configuration
+Open [http://localhost:3000](http://localhost:3000). Use `npm run build` and `npm start` for a production build.
 
-1. **Basic Setup**: The default configuration simulates our solar system with realistic parameters.
+## Explore a system
 
-2. **Custom Scenarios**:
-    - Adjust integration method in settings panel
+- Drag to rotate the view. Scroll or pinch to zoom. Select a body in the viewport or object list to see its live mass, radius, speed, and distance from the most massive body.
+- Use the playback controls to pause, advance up to one simulated hour, or restart from the system's starting state. Use **Space** to play or pause and **R** to reset the camera.
+- Scrub the recorded timeline to inspect earlier states. Use **Jump to latest** to return, or play from the selected time to continue the simulation from that point. The inspector charts the selected body's recorded speed and distance.
+- Choose from five presets or add, edit, and remove bodies. Use **Export** to save current positions and velocities as JSON. **Import** loads existing exports and accepts systems of up to 60 bodies.
+- In **Settings**, choose Euler, Velocity Verlet, or Runge–Kutta 4, adjust gravity, and toggle collision merging and motion trails.
 
-3. **Performance Tips**:
-    - For complex simulations with many bodies, use the "Performance Mode"
-    - Dedicated GPU recommended for simulations with >1000 particles
+The renderer projects 3D coordinates onto a Canvas 2D viewport, so the app runs without WebGL. Display sizes and distances are compressed independently of the physics. Orbit guides indicate starting distances for the Solar System and Earth–Moon presets. Motion trails show simulated positions. Near close encounters, the simulation can advance more slowly than the requested time scale to keep the integration work bounded.
 
-## Documentation
-
-For a complete explanation of the mathematical foundations, physics equations, and implementation details:
-
-📄 [**Download the Comprehensive Mathematical Guide (PDF)**](documentation/mathematical-foundations.pdf)
-
-This guide covers:
-- Vector mathematics with examples
-- Linear algebra applications
-- Matrix transformations
-- Gravitational force calculations
-- Orbital mechanics
-- Numerical integration methods
-- Step-by-step simulation examples
+The physics works in SI units. See the [mathematical foundations](documentation/mathematical-foundations.md) for the underlying equations.
