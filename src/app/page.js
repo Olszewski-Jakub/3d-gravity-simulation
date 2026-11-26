@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import OrbitViewport, { initialCamera, zoomBy } from '../components/GravitySimulation/OrbitViewport';
+import Telemetry from '../components/UI/Telemetry';
 import OrbitIcon from '../components/UI/OrbitIcon';
 import { ASTRONOMICAL_UNIT, GRAVITATIONAL_CONSTANT } from '../lib/physics/constants';
 import { presets, setupPreset } from '../lib/presets';
@@ -90,7 +91,7 @@ export default function Home() {
     const [settings, setSettings] = useState({ paused: false, pace: 1, method: 'verlet', gravity: GRAVITATIONAL_CONSTANT, collisions: true });
     const [display, setDisplay] = useState({ labels: true, guides: true, trails: true });
     const [camera, setCamera] = useState(initialCamera);
-    const [selected, setSelected] = useState('sun');
+    const [selected, setSelected] = useState('earth');
     const [dialog, setDialog] = useState(null);
     const [editingBody, setEditingBody] = useState(null);
     const [notice, setNotice] = useState(null);
@@ -100,7 +101,13 @@ export default function Home() {
 
     const body = frame.bodies.find(item => item.id === selected) ?? frame.bodies[0];
     const reference = frame.bodies.reduce((a, b) => !a || b.mass > a.mass ? b : a, null);
-    const presetName = presets.find(preset => preset.id === presetId)?.name ?? 'Custom System';
+    const preset = presets.find(item => item.id === presetId);
+    const presetName = preset?.name ?? 'Custom System';
+    const isReplaying = frame.cursor !== null;
+    const hasGuides = presetId === 'solarSystem' || presetId === 'earthMoonSystem';
+    const topDown = camera.tilt >= 1.55;
+    const elapsedDays = (frame.elapsed / DAY).toFixed(2);
+    const trackedBody = frame.bodies.find(item => item.id === camera.focus);
     const distance = body && reference ? Math.hypot(...body.position.map((value, i) => value - reference.position[i])) : 0;
     const togglePlay = () => setSettings(current => ({ ...current, paused: !current.paused }));
     const patchSettings = patch => setSettings(current => ({ ...current, ...patch }));
@@ -123,10 +130,15 @@ export default function Home() {
         return () => window.removeEventListener('keydown', onKey);
     }, [dialog]);
 
+    function selectBody(id) {
+        setSelected(id);
+        setCamera(current => current.focus === null ? current : { ...current, focus: id });
+    }
+
     function load(bodies, id) {
         setSystem(bodies);
         setPresetId(id);
-        setSelected(bodies[0]?.id);
+        setSelected(id === 'solarSystem' ? 'earth' : bodies[0]?.id);
         setCamera(initialCamera);
         frame.reset(bodies);
     }
@@ -158,7 +170,7 @@ export default function Home() {
             return [...bodies, next];
         };
         setSystem(update);
-        frame.edit(update, next.id);
+        frame.edit(update);
         setPresetId('custom');
         setSelected(next.id);
         close();
@@ -167,7 +179,7 @@ export default function Home() {
     function removeBody() {
         const update = bodies => bodies.filter(item => item.id !== editingBody.id);
         setSystem(update);
-        frame.edit(update, editingBody.id);
+        frame.edit(update);
         setPresetId('custom');
         setCamera(current => current.focus === editingBody.id ? { ...current, focus: null } : current);
         close();
@@ -201,8 +213,8 @@ export default function Home() {
             </header>
             <main className="shell">
                 <div className="intro">
-                    <div><h1>Simulation workspace</h1><p>Explore how gravity shapes the motion of celestial bodies.</p></div>
-                    <div className="status"><i className={settings.paused || frame.error ? 'idle' : ''}/>{frame.error ? 'Simulation stopped' : settings.paused ? 'Simulation paused' : 'Simulation running'}</div>
+                    <div><h1>{presetName}</h1><p>{preset?.description ?? 'Your celestial bodies and initial conditions'}</p></div>
+                    <div className="status"><i className={settings.paused || frame.error ? 'idle' : ''}/>{frame.error ? 'Stopped' : isReplaying ? 'Reviewing history' : settings.paused ? 'Paused' : 'Live simulation'}</div>
                 </div>
 
                 {(notice || frame.error) && <div className={'notice ' + (frame.error || notice?.error ? 'error' : '')} role={frame.error || notice?.error ? 'alert' : 'status'}>
@@ -214,14 +226,15 @@ export default function Home() {
                         <div className="panel-head">
                             <h2 id="viewport-title"><OrbitIcon name="orbit"/> Orbital view</h2>
                             <div className="view-actions">
-                                <Button className="chip" disabled={!["solarSystem", "earthMoonSystem"].includes(presetId)} aria-pressed={display.guides && ["solarSystem", "earthMoonSystem"].includes(presetId)} onClick={() => toggleDisplay('guides')}>Orbits</Button>
+                                <Button className="chip" disabled={!hasGuides} aria-pressed={display.guides && hasGuides} onClick={() => toggleDisplay('guides')}>Guides</Button>
                                 <Button className="chip" aria-pressed={display.labels} onClick={() => toggleDisplay('labels')}>Labels</Button>
+                                <Button className="chip" aria-pressed={topDown} title="View from above the orbital plane" onClick={() => setCamera(current => ({ ...current, tilt: topDown ? initialCamera.tilt : 1.56 }))}>Top view</Button>
                             </div>
                         </div>
                         <div className="viewport" ref={viewport}>
                             <OrbitViewport frame={frame} system={system} camera={camera} setCamera={setCamera} presetId={presetId}
-                                selected={body?.id} onSelect={setSelected} {...display}/>
-                            <div className="view-caption"><strong>{presetName}</strong><span>3D VIEW · DISPLAY SCALED</span></div>
+                                selected={body?.id} onSelect={selectBody} {...display}/>
+                            <div className="view-caption"><strong>{(camera.zoom * 100).toFixed(0)}% zoom</strong><span>{trackedBody ? 'TRACKING ' + trackedBody.name : 'DISPLAY SCALED'}</span></div>
                             <div className="camera-actions" aria-label="Camera controls">
                                 <Button className="icon-button" icon="plus" label="Zoom in" onClick={() => zoom(1.28)}/>
                                 <Button className="icon-button" icon="minus" label="Zoom out" onClick={() => zoom(1 / 1.28)}/>
@@ -232,17 +245,28 @@ export default function Home() {
                         </div>
                         <div className="transport" aria-label="Playback controls">
                             <div className="playback">
-                                <Button className="accent play" icon={settings.paused ? 'play' : 'pause'} label={settings.paused ? 'Play simulation' : 'Pause simulation'} disabled={!!frame.error} onClick={togglePlay}/>
+                                <Button className="accent play" icon={settings.paused ? 'play' : 'pause'} label={isReplaying ? 'Resume from selected time' : settings.paused ? 'Play simulation' : 'Pause simulation'} disabled={!!frame.error} onClick={togglePlay}/>
                                 <Button className="icon-button" icon="step" label="Advance up to one simulated hour" disabled={!settings.paused || !!frame.error} onClick={frame.step}/>
                                 <Button className="icon-button" icon="reset" label="Reset simulation" onClick={() => { frame.reset(system); setCamera(initialCamera); }}/>
                             </div>
-                            <div className="sim-clock"><span>SIMULATED TIME</span><strong>{(frame.elapsed / DAY).toFixed(2)} <small>days</small></strong></div>
+                            <div className="sim-clock"><span>SIMULATED TIME</span><strong>{elapsedDays} <small>days</small></strong></div>
                             <div className="speed-control">
                                 <label htmlFor="pace">Time scale</label>
                                 <select id="pace" value={settings.pace} onChange={event => patchSettings({ pace: Number(event.target.value) })}>
                                     {speeds.map(speed => <option key={speed} value={speed}>{speed} day/s</option>)}
                                 </select>
                             </div>
+                        </div>
+                        <div className="timeline">
+                            <div className="timeline-heading">
+                                <label htmlFor="timeline">Recorded timeline</label>
+                                {isReplaying && <Button className="return-live" onClick={() => frame.seek(frame.snapshots.length)}>Jump to latest</Button>}
+                            </div>
+                            <input id="timeline" type="range" min="0" max={frame.snapshots.length} step="1"
+                                value={frame.cursor ?? frame.snapshots.length} disabled={frame.snapshots.length < 2}
+                                aria-valuetext={elapsedDays + ' simulated days'}
+                                onChange={event => { patchSettings({ paused: true }); frame.seek(Number(event.target.value)); }}/>
+                            <div className="timeline-times"><span>{(frame.snapshots[0].elapsed / DAY).toFixed(2)} d</span><span>{(frame.latest.elapsed / DAY).toFixed(2)} d</span></div>
                         </div>
                     </section>
 
@@ -262,13 +286,14 @@ export default function Home() {
                             </dl>
                             <Button className="outline focus" icon="target" aria-pressed={camera.focus === body.id}
                                 onClick={() => setCamera(current => current.focus === body.id ? initialCamera : { ...current, focus: body.id, zoom: 1.7 })}>
-                                {camera.focus === body.id ? 'Release camera' : 'Focus camera'}
+                                {camera.focus === body.id ? 'Release camera' : 'Track body'}
                             </Button>
+                            <Telemetry body={body} reference={reference} snapshots={frame.snapshots} cursor={frame.cursor} elapsed={frame.elapsed}/>
                         </>}
                         <div className="objects">
                             <h3>System objects</h3>
                             <div className="object-list" role="group" aria-label="System objects">
-                                {frame.bodies.map(item => <button type="button" className="object" key={item.id} aria-pressed={item.id === body?.id} onClick={() => setSelected(item.id)}>
+                                {frame.bodies.map(item => <button type="button" className="object" key={item.id} aria-pressed={item.id === body?.id} onClick={() => selectBody(item.id)}>
                                     <i style={{ '--body-color': bodyColor(item) }}/><span>{item.name}</span><small>{bodyTypes[item.type] ?? item.type}</small>
                                 </button>)}
                             </div>
@@ -287,7 +312,7 @@ export default function Home() {
                     </div>
                     <div className="presets">
                         {presets.map(preset => <button key={preset.id} type="button" className="preset" style={{ '--preset-color': preset.color }}
-                            aria-pressed={presetId === preset.id} onClick={() => choosePreset(preset.id)}>
+                            data-system={preset.id} aria-pressed={presetId === preset.id} onClick={() => choosePreset(preset.id)}>
                             <span className="preset-icon"><OrbitIcon name={preset.icon} size={21}/></span>
                             <span><strong>{preset.name}</strong><small>{preset.description}</small></span>
                         </button>)}
@@ -315,8 +340,8 @@ export default function Home() {
             {dialog === 'help' && <Dialog title="Workspace guide" close={close}>
                 <div className="guide">
                     <p>Drag the view to rotate the system. Scroll or pinch to zoom. With the view focused, use the arrow keys to rotate. Select an object in the view or inspector to see its live measurements.</p>
-                    <p>Pause playback to advance up to one simulated hour at a time. Reset returns the bodies to the starting state of your experiment.</p>
-                    <p>Orbit guides mark starting distances in the Solar System and Earth–Moon presets. Trails show the actual paths bodies have taken. Sizes and distances in the view are scaled for readability.</p>
+                    <p>Pause playback to advance up to one simulated hour at a time. Drag the recorded timeline to inspect earlier states. Play or step from an earlier point to continue the experiment from there. Reset returns the bodies to the starting state.</p>
+                    <p>Orbit guides mark starting distances in the Solar System and Earth–Moon presets. Trails show the actual paths bodies have taken. Sizes and distances in the view are scaled for readability. The inspector charts recorded speed and distance.</p>
                     <p><kbd>Space</kbd> Play or pause <kbd>R</kbd> Reset camera</p>
                 </div>
             </Dialog>}

@@ -17,6 +17,7 @@ Open [http://localhost:3000](http://localhost:3000). Use `npm run build` and `np
 
 - Drag to rotate the view. Scroll or pinch to zoom. Select a body in the viewport or object list to see its live mass, radius, speed, and distance from the most massive body.
 - Use the playback controls to pause, advance up to one simulated hour, or restart from the system's starting state. Use **Space** to play or pause and **R** to reset the camera.
+- Scrub the recorded timeline to inspect earlier states. Use **Jump to latest** to return, or play from the selected time to continue the simulation from that point. The inspector charts the selected body's recorded speed and distance.
 - Choose from five presets or add, edit, and remove bodies. Use **Export** to save current positions and velocities as JSON. **Import** loads existing exports and accepts systems of up to 60 bodies.
 - In **Settings**, choose Euler, Velocity Verlet, or Runge–Kutta 4, adjust gravity, and toggle collision merging and motion trails.
 

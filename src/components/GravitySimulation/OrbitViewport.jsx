@@ -8,7 +8,6 @@ export const zoomBy = (zoom, factor) => Math.min(12, Math.max(0.38, zoom * facto
 const TAU = Math.PI * 2;
 const TEXTURES = new Set(['earth', 'jupiter', 'mars', 'mercury', 'moon', 'neptune', 'saturn', 'uranus', 'venus']);
 const images = new Map();
-let solarTexture;
 
 function randomGenerator(seed) {
     return () => {
@@ -18,32 +17,14 @@ function randomGenerator(seed) {
 }
 
 const random = randomGenerator(73);
-const stars = Array.from({ length: 950 }, () => [random(), random(), random(), random()]);
-
-function makeSolarTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 128;
-    const ctx = canvas.getContext('2d');
-    const image = ctx.createImageData(128, 128);
-    const random = randomGenerator(963);
-    for (let y = 0; y < 128; y++) {
-        for (let x = 0; x < 128; x++) {
-            const offset = (y * 128 + x) * 4;
-            const domain = Math.sin(x * 0.17 + 2 * Math.sin(y * 0.12)) * Math.cos(y * 0.27)
-                + 0.4 * Math.sin(x * 0.5 + y * 0.3) + random() * 0.56;
-            image.data.set([255, 163 + domain * 57, 73 + domain * 49, 255], offset);
-        }
-    }
-    ctx.putImageData(image, 0, 0);
-    return canvas;
-}
+const stars = Array.from({ length: 250 }, () => [random(), random(), random(), random()]);
 
 function textureFor(file) {
     const name = typeof file === 'string' ? file.replace(/\.jpg$/, '') : '';
-    if (!TEXTURES.has(name)) return null;
+    if (name !== 'sun' && !TEXTURES.has(name)) return null;
     if (!images.has(name)) {
         const image = new Image();
-        image.src = '/textures/planets/' + name + '.jpg';
+        image.src = '/textures/' + (name === 'sun' ? 'stars/' : 'planets/') + name + '.jpg';
         images.set(name, image);
     }
     const image = images.get(name);
@@ -58,7 +39,8 @@ function paintBody(ctx, point, body, radius, selected, labels, width, height) {
     if (star || hole) {
         const glow = ctx.createRadialGradient(x, y, radius * 0.6, x, y, radius * 3.7);
         glow.addColorStop(0, hole ? '#e08b6766' : '#ffb346a0');
-        glow.addColorStop(0.35, '#e7702f30');
+        glow.addColorStop(0.21, '#ff9b524c');
+        glow.addColorStop(0.54, '#fa702418');
         glow.addColorStop(1, '#d76b2800');
         ctx.fillStyle = glow;
         ctx.fillRect(x - radius * 4, y - radius * 4, radius * 8, radius * 8);
@@ -76,8 +58,12 @@ function paintBody(ctx, point, body, radius, selected, labels, width, height) {
     ctx.clip();
     ctx.fillStyle = hole ? '#08080d' : color;
     ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
-    const texture = star ? (solarTexture ??= makeSolarTexture()) : textureFor(body.texture);
-    if (texture) ctx.drawImage(texture, x - radius, y - radius, radius * 2, radius * 2);
+    const texture = textureFor(star ? 'sun.jpg' : body.texture);
+    if (texture) {
+        const size = texture.naturalHeight;
+        const left = star ? texture.naturalWidth * 0.32 : (texture.naturalWidth - size) / 2;
+        ctx.drawImage(texture, left, 0, size, size, x - radius, y - radius, radius * 2, radius * 2);
+    }
     if (!hole) {
         const light = ctx.createRadialGradient(x - radius * 0.42, y - radius * 0.42, 0, x, y, radius * 1.12);
         light.addColorStop(0, star ? '#fff2ba93' : '#ffffff34');
@@ -88,12 +74,19 @@ function paintBody(ctx, point, body, radius, selected, labels, width, height) {
     }
     ctx.restore();
 
+    if (star) {
+        ctx.beginPath();
+        ctx.arc(x, y, radius - 0.35, 0, TAU);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#ffc884b0';
+        ctx.stroke();
+    }
     if (selected) {
         ctx.beginPath();
         ctx.arc(x, y, radius + 6, 0, TAU);
         ctx.lineWidth = 1;
         ctx.setLineDash([3, 4]);
-        ctx.strokeStyle = '#ffd5989e';
+        ctx.strokeStyle = '#d1bbff';
         ctx.stroke();
         ctx.setLineDash([]);
     }
@@ -102,7 +95,7 @@ function paintBody(ctx, point, body, radius, selected, labels, width, height) {
         ctx.textAlign = 'center';
         ctx.lineWidth = 3;
         ctx.strokeStyle = '#0b0a10';
-        ctx.fillStyle = selected ? '#ffe2b2' : '#d6cbd0';
+        ctx.fillStyle = selected ? '#e0d3ff' : '#e1dcec';
         const labelX = Math.min(width - 44, Math.max(44, x));
         const labelY = Math.min(height - 12, Math.max(16, y + radius + (selected ? 23 : 15)));
         ctx.strokeText(body.name, labelX, labelY, 88);
@@ -124,7 +117,7 @@ function draw(ctx, width, height, view) {
     const baseline = system.find(body => body.id === originId).position;
     const extent = Math.max(1, ...system.map(body => Math.hypot(...body.position.map((value, axis) => value - baseline[axis]))));
     const anchor = frame.bodies.find(body => body.id === originId) ?? frame.bodies[0];
-    const span = Math.min(width * 0.43, height * 0.76);
+    const span = Math.min(width * 0.43, height * 0.79);
     const center = frame.bodies.find(body => body.id === camera.focus);
     const cosine = Math.cos(camera.yaw);
     const sine = Math.sin(camera.yaw);
@@ -144,7 +137,7 @@ function draw(ctx, width, height, view) {
         const [x, y, z] = mapped.map((v, axis) => v - offset[axis]);
         const u = x * cosine - y * sine;
         const v = x * sine + y * cosine;
-        return [width * 0.5 + u * scale, height * 0.48 + (v * tiltSin - z * tiltCos) * scale, v * tiltCos + z * tiltSin];
+        return [width * 0.5 + u * scale, height * 0.51 + (v * tiltSin - z * tiltCos) * scale, v * tiltCos + z * tiltSin];
     }
     function line(points, color) {
         ctx.beginPath();
@@ -165,13 +158,13 @@ function draw(ctx, width, height, view) {
                 const angle = i / 120 * TAU;
                 return [anchor.position[0] + r * Math.cos(angle), anchor.position[1] + r * Math.sin(angle), anchor.position[2]];
             });
-            line(points, body.id === selected ? '#e7b57b65' : '#aca0b435');
+            line(points, body.id === selected ? '#c2a8ffbe' : '#a8b0df48');
         });
     }
     if (trails) {
         frame.bodies.forEach(body => {
             const path = frame.trails[body.id];
-            if (path?.length > 1) line(path, body.id === selected ? '#f7bb79a0' : '#a99db470');
+            if (path?.length > 1) line(path, body.id === selected ? '#f5cc98dd' : '#a6b6e08f');
         });
     }
 

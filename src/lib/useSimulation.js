@@ -59,10 +59,49 @@ function advance(frame, duration, settings) {
     return { bodies, elapsed, trails, error: '' };
 }
 
+const RECORD_EVERY = 8;
+const MAX_SNAPSHOTS = 180;
+
+function startRecording(bodies, elapsed = 0) {
+    const live = { bodies, elapsed, trails: {}, error: '' };
+    return { live, snapshots: [{ bodies, elapsed }], cursor: null, ticks: 0 };
+}
+
+function previewFrame(record) {
+    if (record.cursor === null) return record.live;
+    const current = record.snapshots[record.cursor];
+    const recorded = record.snapshots.slice(0, record.cursor + 1);
+    const trails = Object.fromEntries(current.bodies.map(body => [
+        body.id,
+        recorded.flatMap(sample => {
+            const match = sample.bodies.find(item => item.id === body.id);
+            return match ? [match.position] : [];
+        })
+    ]));
+    return { ...current, trails, error: '' };
+}
+
+function advanceRecording(record, duration, settings, saveStep = false) {
+    if (record.cursor === null && record.live.error) return record;
+    const live = advance(previewFrame(record), duration, settings);
+    let snapshots = record.cursor === null ? record.snapshots : record.snapshots.slice(0, record.cursor + 1);
+    let ticks = record.cursor === null ? record.ticks + 1 : 1;
+    if ((ticks >= RECORD_EVERY || saveStep) && live.elapsed > snapshots.at(-1).elapsed) {
+        snapshots = [...snapshots.slice(1 - MAX_SNAPSHOTS), { bodies: live.bodies, elapsed: live.elapsed }];
+        ticks = 0;
+    }
+    return { live, snapshots, cursor: null, ticks };
+}
+
 export function useSimulation(system, settings) {
-    const [frame, setFrame] = useState(() => ({ bodies: system, elapsed: 0, trails: {}, error: '' }));
-    const reset = useCallback(bodies => setFrame({ bodies, elapsed: 0, trails: {}, error: '' }), []);
+    const [record, setRecord] = useState(() => startRecording(system));
     const { paused, pace, method, collisions, gravity } = settings;
+    const frame = previewFrame(record);
+    const reset = useCallback(bodies => setRecord(startRecording(bodies)), []);
+    const seek = index => setRecord(current => ({
+        ...current,
+        cursor: index < current.snapshots.length ? Math.max(0, index) : null
+    }));
 
     useEffect(() => {
         if (paused || frame.error) return;
@@ -71,17 +110,20 @@ export function useSimulation(system, settings) {
             const now = performance.now();
             const duration = Math.min((now - last) / 1000, 0.08) * DAY * pace;
             last = now;
-            if (document.hidden) return;
-            setFrame(current => current.error ? current : advance(current, duration, { method, collisions, gravity }));
+            if (document.hidden || duration <= 0) return;
+            setRecord(current => advanceRecording(current, duration, { method, collisions, gravity }));
         }, 1000 / 30);
         return () => window.clearInterval(timer);
     }, [paused, pace, method, gravity, collisions, frame.error]);
 
-    const step = () => setFrame(current => current.error ? current : advance(current, 3600, settings));
-    const edit = (update, id) => setFrame(current => {
-        const trails = { ...current.trails };
-        delete trails[id];
-        return { ...current, bodies: update(current.bodies), trails };
+    const step = () => setRecord(current => advanceRecording(current, 3600, settings, true));
+    const edit = update => setRecord(current => {
+        const source = previewFrame(current);
+        return startRecording(update(source.bodies), source.elapsed);
     });
-    return { ...frame, reset, step, edit };
+
+    return {
+        ...frame, reset, step, edit, seek,
+        snapshots: record.snapshots, cursor: record.cursor, latest: record.live
+    };
 }
