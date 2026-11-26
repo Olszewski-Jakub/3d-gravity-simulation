@@ -1,4 +1,4 @@
-import { calculateNetForce, calculateAcceleration } from './gravitationalForce';
+import { calculateNetForce, calculateAcceleration } from './gravitationalForce.js';
 
 /**
  * Updates the positions and velocities of celestial bodies using the Euler method.
@@ -10,21 +10,10 @@ import { calculateNetForce, calculateAcceleration } from './gravitationalForce';
  * @returns {Array} - Updated array of celestial bodies
  */
 export function eulerIntegrator(bodies, dt, G) {
-    // Create a deep copy to prevent mutation issues
-    const bodiesCopy = JSON.parse(JSON.stringify(bodies));
-
-    return bodiesCopy.map(body => {
+    return bodies.map(body => {
         try {
-            // Special handling for stars - keep them fixed
-            if (body.type === 'star') {
-                return {
-                    ...body,
-                    velocity: [0, 0, 0] // Fix stars in place like in verletIntegrator
-                };
-            }
-
             // Calculate net force on this body
-            const force = calculateNetForce(body, bodiesCopy, G);
+            const force = calculateNetForce(body, bodies, G);
 
             // Calculate acceleration (F = ma, so a = F/m)
             const acceleration = calculateAcceleration(force, body.mass);
@@ -82,21 +71,14 @@ export function eulerIntegrator(bodies, dt, G) {
  * @returns {Array} - Updated array of celestial bodies
  */
 export function verletIntegrator(bodies, dt, G) {
-    // Create a copy of bodies to prevent mutation of the original array
-
-    //remove stars from bodies the array
-    const sun = bodies.filter(body => body.type === 'star');
-    console.log("Sun", sun);
-    const bodiesCopy = JSON.parse(JSON.stringify(bodies));
-
     // Calculate initial accelerations
-    const accelerations = bodiesCopy.map(body => {
-        const force = calculateNetForce(body, bodiesCopy, G);
+    const accelerations = bodies.map(body => {
+        const force = calculateNetForce(body, bodies, G);
         return calculateAcceleration(force, body.mass);
     });
 
     // Update positions using current velocities and accelerations
-    const halfStepBodies = bodiesCopy.map((body, index) => {
+    const halfStepBodies = bodies.map((body, index) => {
         const a = accelerations[index];
 
         // Update position: x(t+dt) = x(t) + v(t)·dt + 0.5·a(t)·dt²
@@ -112,12 +94,11 @@ export function verletIntegrator(bodies, dt, G) {
             body.velocity[1] + 0.5 * a[1] * dt,
             body.velocity[2] + 0.5 * a[2] * dt
         ];
-        const finalVelocity = body.type === 'star' ? [0, 0, 0] : halfStepVelocity;
 
         return {
             ...body,
             position: newPosition,
-            velocity: finalVelocity
+            velocity: halfStepVelocity
         };
     });
 

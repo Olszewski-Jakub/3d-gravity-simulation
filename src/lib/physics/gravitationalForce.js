@@ -125,20 +125,11 @@ export function areColliding(body1, body2) {
 export function handleCollision(body1, body2) {
     // Determine the more massive body
     const primaryBody = body1.mass >= body2.mass ? body1 : body2;
-    const secondaryBody = body1.mass >= body2.mass ? body2 : body1;
-
-    // Calculate total momentum (p = mv)
-    const momentum1 = body1.mass * new Array(3).fill(0).map((_, i) => body1.velocity[i]);
-    const momentum2 = body2.mass * new Array(3).fill(0).map((_, i) => body2.velocity[i]);
-
     const totalMass = body1.mass + body2.mass;
-
-    // Calculate new velocity based on conservation of momentum
-    const newVelocity = [
-        (momentum1[0] + momentum2[0]) / totalMass,
-        (momentum1[1] + momentum2[1]) / totalMass,
-        (momentum1[2] + momentum2[2]) / totalMass
-    ];
+    const fraction1 = body1.mass / totalMass;
+    const fraction2 = body2.mass / totalMass;
+    const newVelocity = body1.velocity.map((value, axis) => value * fraction1 + body2.velocity[axis] * fraction2);
+    const newPosition = body1.position.map((value, axis) => value * fraction1 + body2.position[axis] * fraction2);
 
     // Calculate new radius (assuming constant density)
     const volumeRatio = Math.pow(body1.radius, 3) + Math.pow(body2.radius, 3);
@@ -150,6 +141,6 @@ export function handleCollision(body1, body2) {
         mass: totalMass,
         radius: newRadius,
         velocity: newVelocity,
-        // Keep position of the more massive body
+        position: newPosition
     };
 }

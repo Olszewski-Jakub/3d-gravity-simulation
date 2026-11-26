@@ -56,7 +56,11 @@ export function importSystem(file) {
                 // Validate each body has the required properties
                 const requiredProps = ['id', 'name', 'type', 'mass', 'radius', 'position', 'velocity'];
 
+                if (systemData.bodies.length === 0 || systemData.bodies.length > 60) {
+                    throw new Error('A system must contain 1–60 bodies.');
+                }
                 systemData.bodies.forEach((body, index) => {
+                    if (!body || typeof body !== 'object') throw new Error('Each body must be an object.');
                     requiredProps.forEach(prop => {
                         if (body[prop] === undefined) {
                             throw new Error(`Body at index ${index} is missing the required property: ${prop}`);
@@ -98,18 +102,30 @@ export function validateSystem(bodies) {
         warnings: []
     };
 
-    // Check for bodies with zero or negative mass
-    bodies.forEach(body => {
-        if (body.mass <= 0) {
-            result.valid = false;
-            result.errors.push(`${body.name} has an invalid mass: ${body.mass}`);
+    const ids = new Set();
+    if (!bodies.length || bodies.length > 60) result.errors.push('A system must contain 1–60 bodies.');
+    for (const body of bodies) {
+        const id = String(body.id);
+        if (!['string', 'number'].includes(typeof body.id) || !id.trim() ||
+            ['__proto__', 'constructor', 'prototype'].includes(id) || ids.has(id)) {
+            result.errors.push('Every body must have a unique, usable ID.');
         }
-
-        if (body.radius <= 0) {
-            result.valid = false;
-            result.errors.push(`${body.name} has an invalid radius: ${body.radius}`);
+        ids.add(id);
+        if (typeof body.name !== 'string' || !body.name.trim() || typeof body.type !== 'string' || !body.type.trim()) {
+            result.errors.push('Every body needs a name and type.');
         }
-    });
+        for (const field of ['mass', 'radius']) {
+            if (!Number.isFinite(body[field]) || body[field] <= 0) {
+                result.errors.push(`${body.name} has an invalid ${field}.`);
+            }
+        }
+        for (const field of ['position', 'velocity']) {
+            if (!Array.isArray(body[field]) || body[field].length !== 3 || !body[field].every(Number.isFinite)) {
+                result.errors.push(`${body.name} has an invalid ${field} vector.`);
+            }
+        }
+    }
+    if (result.errors.length) return { ...result, valid: false };
 
     // Check for overlapping bodies (initial collisions)
     for (let i = 0; i < bodies.length; i++) {
